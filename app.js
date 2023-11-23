@@ -1,7 +1,8 @@
 "use strict";
 // Modules
 const express = require("express");
-const multer = require("multer");
+require('dotenv').config();
+// const multer = require("multer");
 const fs = require("fs").promises;
 const mysql = require("mysql2/promise");
 const app = express();
@@ -9,7 +10,7 @@ const app = express();
 // Middlewares
 app.use(express.urlencoded( { extended: true }));
 app.use(express.json());
-app.use(multer().none());
+// app.use(multer().none());
 app.use((err, req, res, next) =>{
     console.error(err.stack);
     res.status(500).send("Sever-side error!");
@@ -18,33 +19,55 @@ app.use((err, req, res, next) =>{
 let conn = null;
 (async function (){
     conn = await mysql.createConnection({
-        user: 'rek',
-        password: 'thuanlp123',
-        database: 'themepark',
-        host: '127.0.0.1',
+        user: process.env.DBUSER,
+        password: process.env.DBPASSWORD,
+        database: process.env.DATABASE,
+        host: process.env.HOST,
+        port: process.env.PORT,
     })
 }) ();
 
-// Handle requests
+/* Handle requests */
+// Sign-in page
 app.get("/", async (req, res) =>{
-    let rows = []
-    let tb = "THEMEPARK", col = "PARK_COUNTRY";
-    try {
-        let sql = "SELECT * FROM ?? WHERE ?? = ?";
-        let rs = await conn.query(sql, [tb, col, "UK"]);
-        rows = rs[0];
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Cannot read data from database");
-        return;
-    }
+    let rows = [];
+    await conn;
+    // let tb = "THEMEPARK", col = "PARK_COUNTRY";
+    // try {
+    //     let sql = "SELECT * FROM ?? WHERE ?? = ?";
+    //     let rs = await conn.query(sql, [tb, col, "UK"]);
+    //     rows = rs[0];
+    // } catch (err) {
+    //     console.log(err);
+    //     res.status(500).send("Cannot read data from database");
+    //     return;
+    // }
 
-    for (let row of rows) {
-        console.log(row.PARK_CODE + ", " + row.PARK_NAME +
-                    ", " + row.PARK_CITY);
-    }
+    // for (let row of rows) {
+    //     console.log(row.PARK_CODE + ", " + row.PARK_NAME +
+    //                 ", " + row.PARK_CITY);
+    // }
     res.send("connection success");
 });
+
+// Sign-up page
+app.get("/register", async (req, res) =>{
+    res.send("Register successfully");
+});
+
+// Inbox page
+app.get("/inbox", async (req, res) =>{
+    res.send("Register successfully");
+});
+
+app.get("/inbox/compose", async (req, res) =>{
+    res.send("Register successfully");
+});
+
+app.get("/inbox/outbox", async (req, res) =>{
+    res.send("Register successfully");
+});
+
 app.get("/info", async (req, res) =>{
     try {
         let contents = await fs.readFile("./src/solaris.json", 'utf8');
@@ -57,15 +80,15 @@ app.get("/info", async (req, res) =>{
 });
 
 app.get("/input", (req, res) => {
-    let name = req.query.name;
-    let password = req.query.password;
-    if (! (name && password)) {
-        res.status(400).send("Error: Missing required: name and password");
-    } else {
-        res.type("text");
-        res.send("Login with username: " + name + "\n" + 
-            "password: " + password); 
-    }
+    // let name = req.query.name;
+    // let password = req.query.password;
+    // if (! (name && password)) {
+    //     res.status(400).send("Error: Missing required: name and password");
+    // } else {
+    //     res.type("text");
+    //     res.send("Login with username: " + name + "\n" + 
+    //         "password: " + password); 
+    // }
 });
 
 app.post("/input", (req, res) => {
@@ -82,7 +105,7 @@ app.post("/input", (req, res) => {
 
 
 app.use(express.static('public'));
-let appServer = app.listen(8080);
+let appServer = app.listen(8000);
 
 process.on("SIGTERM", () => {
     console.log("SIGTERM singale received.");

@@ -1,5 +1,5 @@
 "use strict";
-// Modules
+// CommonJS Modules
 const crypto = require('crypto');
 const express = require("express");
 require('dotenv').config();
@@ -30,7 +30,12 @@ let conn = null;
 }) ();
 
 /* Handle requests */
-// Sign-in page
+/* AUTHORIZATION 
+ * > Register Email Account with password encrypted 
+ * > Login to Email System using Cookie to remember session 
+ * */
+// Home Page
+// TODO Redirect to the login page if there is no cookie sent from client
 app.get("/", async (req, res) =>{
     let rows = [];
     await conn;
@@ -41,7 +46,7 @@ app.get("/", async (req, res) =>{
     //     rows = rs[0];
     // } catch (err) {
     //     console.log(err);
-    //     res.status(500).send("Cannot read data from database");
+    //     res.status(500).send("Cannot read userInfo from database");
     //     return;
     // }
 
@@ -56,35 +61,129 @@ app.get("/", async (req, res) =>{
 app.get("/login", async (req, res) => {
     res.render('login');
 });
+app.post("/login", async (req, res) => {
+    const tb = "users";
+    const userEmail = req.body.email;
+    // Use hash to encrypt the password with a random salt number
+    const userPassword = req.body.passwd;
+    let respondData = {
+        "userEmail": userEmail,
+        "emailError": "",
+        "passwordError": "",
+    };
+
+    let userInfo = {};
+    if (userEmail === undefined || userEmail === "") {
+        respondData["emailError"] = "Email cannot be emptied";
+        res.render('login', respondData);
+    } else {
+        const sql = "SELECT * FROM ?? WHERE ?? = ?";
+        try {
+            const rows = (await conn.query(sql, [tb, "userEmail", userEmail]))[0];
+            if (!(rows.length > 0)) {
+                respondData["emailError"] = "Email Account is not existed";
+                res.render('login', respondData);
+            }
+            userInfo = rows[0];
+        } catch (err) {
+            console.log(err);
+            res.status(500).send("User cannot login");
+            return;
+        }
+    }
+
+    if (userPassword === undefined || userPassword === "") {
+        respondData["passwordError"] = "You must enter the password";
+        res.render('login', respondData);
+    }
+
+    try {
+        console.log(userInfo["userEmail"]);
+        console.log(JSON.stringify(userInfo));
+        const hashedPassword = crypto.pbkdf2Sync(userPassword, userInfo.salt, 20, 64
+            , 'sha256').toString('hex');
+        if (hashedPassword === userInfo.userPassword) {
+            res.send("Login to Mail Man successfully");
+            return
+        } else {
+            respondData["passwordError"] = "Password does not match with account in Mail Man";
+            res.render('login', respondData);
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("User cannot login");
+    }
+});
 
 // Sign-up page
-
 app.get("/register", async (req, res, next) =>{
     res.render('register');
 });
-app.post("/register", async (req, res, next) =>{
-    let tb = "users";
-    let userEmail = req.body.email;
-    let userPassword = req.body.psw;
-    let userFullName = req.body.fullname;
-    let salt = crypto.randomBytes(16).toString('hex');
-    let hash = crypto.pbkdf2Sync(userPassword, salt, 20, 64
-    , `sha256`).toString(`hex`);
 
-    try {
-        let sql = "INSERT INTO ?? VALUES(?, ?, ?)";
-        let rs = await conn.query(sql, [tb, userEmail, hash, userFullName]);
-    } catch (err) {
-        if (err.errno === 1062) {
-            console.log("Duplicate entry");
-            res.status(400).send("Account exists: " + userEmail);
+app.post("/register", async (req, res, next) =>{
+    const tb = "users";
+    const userEmail = req.body.email;
+    const userFullName = req.body.fullname;
+    // Use hash to encrypt the password with a random salt number
+    const userPassword = req.body.passwd;
+    const userRePassword = req.body.repasswd;
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hashedPassword = crypto.pbkdf2Sync(userPassword, salt, 20, 64
+    , 'sha256').toString('hex');
+    
+    // Register Information
+    let userInfo = {
+        "userEmail": userEmail,
+        "userPassword": hashedPassword,
+        "userFullName": userFullName,
+        "salt": salt,
+        "emailError": "",
+        "passwordError": "",
+        "passwordReEnterError": "",
+    };
+    let valid = true;
+    if (userEmail === undefined || userEmail === "") {
+        valid = false;
+        userInfo["emailError"] = "Email cannot be emptied";
+    } else {
+        const sql = "SELECT * FROM ?? WHERE ?? = ?";
+        let [rows] = await conn.query(sql, [tb, "userEmail", userEmail]);
+        if (rows.length > 0) {
+            valid = false;
+            userInfo["emailError"] = "Email account existed";
+        }
+    }
+    if (userPassword === undefined || userPassword === "") {
+        valid = false;
+        userInfo["passwordError"] = "Password cannot be emptied";
+    }
+    if (userPassword != userRePassword) {
+        valid = false;
+        userInfo["passwordReEnterError"] = "You must re-enter the same password";
+    }
+
+    if (valid) {
+        try {
+            const sql = "INSERT INTO ?? VALUES(?, ?, ?, ?)";
+            const rs = await conn.query(sql, [tb, userEmail, hashedPassword, userFullName, salt]);
+            let row = rs[0][0];
+
+            console.log("User Registered:");
+            console.log(JSON.stringify(userInfo, null, 2));
+        } catch (err) {
+            if (err.errno === 1062) {
+                console.log("Duplicate entry");
+                res.status(400).send("Account exists: " + userEmail);
+                return;
+            }
+            console.log(err);
+            res.status(500).send("User cannot registration");
             return;
         }
-        console.log(err);
-        res.status(500).send("Cannot read data from database");
-        return;
+        res.send("Register successfully");
+    } else {
+        res.render('register', userInfo);
     }
-    res.send("Register successfully");
 });
 
 // Inbox page
@@ -123,17 +222,17 @@ app.get("/input", (req, res) => {
     // }
 });
 
-app.post("/input", (req, res) => {
-    let name = req.body.name;
-    let password = req.body.password;
-    if (! (name && password)) {
-        res.status(400).send("Error: Missing required: name and password");
-    } else {
-        res.type("text");
-        res.send("Login with username: " + name + "\n" + 
-            "password: " + password); 
-    }
-});
+// app.post("/input", (req, res) => {
+//     let name = req.body.name;
+//     let password = req.body.password;
+//     if (! (name && password)) {
+//         res.status(400).send("Error: Missing required: name and password");
+//     } else {
+//         res.type("text");
+//         res.send("Login with username: " + name + "\n" + 
+//             "password: " + password); 
+//     }
+// });
 
 
 app.use(express.static('public'));

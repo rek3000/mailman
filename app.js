@@ -1,5 +1,6 @@
 "use strict";
 // Modules
+const crypto = require('crypto');
 const express = require("express");
 require('dotenv').config();
 // const multer = require("multer");
@@ -32,7 +33,7 @@ let conn = null;
 app.get("/", async (req, res) =>{
     let rows = [];
     await conn;
-    // let tb = "THEMEPARK", col = "PARK_COUNTRY";
+    // let tb = "users", col = "userEmail";
     // try {
     //     let sql = "SELECT * FROM ?? WHERE ?? = ?";
     //     let rs = await conn.query(sql, [tb, col, "UK"]);
@@ -51,7 +52,29 @@ app.get("/", async (req, res) =>{
 });
 
 // Sign-up page
-app.get("/register", async (req, res) =>{
+app.get("/register", async (req, res, next) =>{
+    let tb = "users";
+    let userEmail = "a@a.com";
+    let userPassword = "thuan";
+    let userFullName = "Ta Cong Thuan";
+    let salt = crypto.randomBytes(16).toString('hex');
+    let hash = crypto.pbkdf2Sync(userPassword, salt, 20, 64
+    , `sha256`).toString(`hex`);
+
+    try {
+        let sql = "INSERT INTO ?? VALUES(?, ?, ?)";
+        let rs = await conn.query(sql, [tb, userEmail, hash, userFullName]);
+        // rows = rs[0];
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Cannot read data from database");
+        return;
+    }
+
+    // for (let row of rows) {
+    //     console.log(row.PARK_CODE + ", " + row.PARK_NAME +
+    //                 ", " + row.PARK_CITY);
+    // }
     res.send("Register successfully");
 });
 

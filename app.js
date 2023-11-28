@@ -3,13 +3,14 @@
 const crypto = require('crypto');
 const express = require("express");
 require('dotenv').config();
-// const multer = require("multer");
+const multer = require("multer");
 const fs = require("fs").promises;
 const mysql = require("mysql2/promise");
 const app = express();
 
 // Middlewares
 app.use(express.urlencoded( { extended: true }));
+app.set('view engine', 'ejs');
 app.use(express.json());
 // app.use(multer().none());
 app.use((err, req, res, next) =>{
@@ -51,12 +52,21 @@ app.get("/", async (req, res) =>{
     res.send("connection success");
 });
 
+// Log-in page
+app.get("/login", async (req, res) => {
+    res.render('login');
+});
+
 // Sign-up page
+
 app.get("/register", async (req, res, next) =>{
+    res.render('register');
+});
+app.post("/register", async (req, res, next) =>{
     let tb = "users";
-    let userEmail = "a@a.com";
-    let userPassword = "thuan";
-    let userFullName = "Ta Cong Thuan";
+    let userEmail = req.body.email;
+    let userPassword = req.body.psw;
+    let userFullName = req.body.fullname;
     let salt = crypto.randomBytes(16).toString('hex');
     let hash = crypto.pbkdf2Sync(userPassword, salt, 20, 64
     , `sha256`).toString(`hex`);
@@ -64,17 +74,16 @@ app.get("/register", async (req, res, next) =>{
     try {
         let sql = "INSERT INTO ?? VALUES(?, ?, ?)";
         let rs = await conn.query(sql, [tb, userEmail, hash, userFullName]);
-        // rows = rs[0];
     } catch (err) {
+        if (err.errno === 1062) {
+            console.log("Duplicate entry");
+            res.status(400).send("Account exists: " + userEmail);
+            return;
+        }
         console.log(err);
         res.status(500).send("Cannot read data from database");
         return;
     }
-
-    // for (let row of rows) {
-    //     console.log(row.PARK_CODE + ", " + row.PARK_NAME +
-    //                 ", " + row.PARK_CITY);
-    // }
     res.send("Register successfully");
 });
 

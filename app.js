@@ -6,9 +6,11 @@ require('dotenv').config();
 const multer = require("multer");
 const fs = require("fs").promises;
 const mysql = require("mysql2/promise");
+const cookieParser = require('cookie-parser');
 const app = express();
 
 // Middlewares
+app.use(cookieParser());
 app.use(express.urlencoded( { extended: true }));
 app.set('view engine', 'ejs');
 app.use(express.json());
@@ -36,25 +38,13 @@ let conn = null;
  * */
 // Home Page
 // TODO Redirect to the login page if there is no cookie sent from client
-app.get("/", async (req, res) =>{
-    let rows = [];
-    await conn;
-    // let tb = "users", col = "userEmail";
-    // try {
-    //     let sql = "SELECT * FROM ?? WHERE ?? = ?";
-    //     let rs = await conn.query(sql, [tb, col, "UK"]);
-    //     rows = rs[0];
-    // } catch (err) {
-    //     console.log(err);
-    //     res.status(500).send("Cannot read userInfo from database");
-    //     return;
-    // }
-
-    // for (let row of rows) {
-    //     console.log(row.PARK_CODE + ", " + row.PARK_NAME +
-    //                 ", " + row.PARK_CITY);
-    // }
-    res.send("connection success");
+app.get("/", async (req, res, next) =>{
+    if (!req.cookies.auth) {
+        return res.redirect('/login');
+    }
+    console.log("User login: ");
+    console.log(JSON.stringify(req.cookies.auth, null, 2));
+    res.send("HomePage");
 });
 
 // Log-in page
@@ -103,8 +93,10 @@ app.post("/login", async (req, res) => {
         const hashedPassword = crypto.pbkdf2Sync(userPassword, userInfo.salt, 20, 64
             , 'sha256').toString('hex');
         if (hashedPassword === userInfo.userPassword) {
-            res.send("Login to Mail Man successfully");
-            return
+            res.cookie("auth", {userEmail, hashedPassword}, {
+                maxAge: 5000000,
+            });
+            return res.redirect('/');
         } else {
             respondData["passwordError"] = "Password does not match with account in Mail Man";
             res.render('login', respondData);

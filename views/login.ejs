@@ -1,32 +1,32 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        .err {color: red}
-    </style>
-</head>
- <h1>Login to Mail Man</h1>
- <form action="/login" method="post">
-  <div class="container">
-    <div>
-    <label for="uname"><b>Email:</b></label>
-    </div>
-    <div>
-    <input type="text" placeholder="Enter Email" name="email"  value="<%= typeof userEmail !== 'undefined' ? userEmail : '' %>"> </div>
-    </div>
-    <div class="err"><%= typeof emailError !== 'undefined' ? emailError : '' %></div>
-    <div>
-    <label for="passwd"><b>Password:</b></label>
-    </div>
-    <div>
-    <input type="password" placeholder="Enter Password" name="passwd">
-    <div>
-    <div class="err"><%= typeof passwordError !== 'undefined' ? passwordError : '' %></div>
-    <button type="submit">Login</button>
-    </div>
-  </div>
-</form> 
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <style>
+.err {color: red}
+        </style>
+    </head>
+    <h1>Login to Mail Man</h1>
+    <form action="/login" method="post">
+        <div class="container">
+            <div>
+                <label for="uname"><b>Email:</b></label>
+            </div>
+            <div>
+                <input type="text" placeholder="Enter Email" name="email"  value="<%= typeof userEmail !== 'undefined' ? userEmail : '' %>"> </div>
+        </div>
+        <div class="err"><%= typeof emailError !== 'undefined' ? emailError : '' %></div>
+        <div>
+            <label for="passwd"><b>Password:</b></label>
+        </div>
+        <div>
+            <input type="password" placeholder="Enter Password" name="passwd">
+            <div>
+                <div class="err"><%= typeof passwordError !== 'undefined' ? passwordError : '' %></div>
+                <button type="submit">Login</button>
+            </div>
+        </div>
+    </form> 
 </html>

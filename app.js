@@ -44,11 +44,27 @@ app.get("/", async (req, res, next) =>{
     }
     console.log("User login: ");
     console.log(JSON.stringify(req.cookies.auth, null, 2));
-    res.send("HomePage");
+    res.render("index", req.cookies.auth);
+});
+
+app.post("/", async (req, res, next) =>{
+    if (!req.cookies.auth) {
+        res.redirect('/login');
+    }
+    console.log("User logout: ");
+    console.log(JSON.stringify(req.cookies.auth, null, 2));
+    res.clearCookie("auth");
+
+  // destroy session data
+    req.session = null;
+    res.redirect('/login');
 });
 
 // Log-in page
 app.get("/login", async (req, res) => {
+    if (req.cookies.auth) {
+        res.redirect('/');
+    }
     res.render('login');
 });
 app.post("/login", async (req, res) => {
@@ -109,10 +125,16 @@ app.post("/login", async (req, res) => {
 
 // Sign-up page
 app.get("/register", async (req, res, next) =>{
+    if (req.cookies.auth) {
+        res.redirect('/');
+    }
     res.render('register');
 });
 
 app.post("/register", async (req, res, next) =>{
+    if (req.cookies.auth) {
+        res.redirect('/');
+    }
     const tb = "users";
     const userEmail = req.body.email;
     const userFullName = req.body.fullname;
@@ -172,7 +194,9 @@ app.post("/register", async (req, res, next) =>{
             res.status(500).send("User cannot registration");
             return;
         }
-        res.send("Register successfully");
+        // res.send("Register successfully");
+        ("Register successfully");
+        res.render('redirect');
     } else {
         res.render('register', userInfo);
     }

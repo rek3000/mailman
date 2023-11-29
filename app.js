@@ -15,6 +15,7 @@ app.use(express.urlencoded( { extended: true }));
 app.set('view engine', 'ejs');
 app.use(express.json());
 // app.use(multer().none());
+app.use(express.static(__dirname + '/public'));
 app.use((err, req, res, next) =>{
     console.error(err.stack);
     res.status(500).send("Sever-side error!");
@@ -63,7 +64,7 @@ app.post("/", async (req, res, next) =>{
 // Log-in page
 app.get("/login", async (req, res) => {
     if (req.cookies.auth) {
-        res.redirect('/');
+        return res.redirect('/');
     }
     res.render('login');
 });
@@ -126,14 +127,14 @@ app.post("/login", async (req, res) => {
 // Sign-up page
 app.get("/register", async (req, res, next) =>{
     if (req.cookies.auth) {
-        res.redirect('/');
+        return res.redirect('/');
     }
     res.render('register');
 });
 
 app.post("/register", async (req, res, next) =>{
     if (req.cookies.auth) {
-        res.redirect('/');
+        return res.redirect('/');
     }
     const tb = "users";
     const userEmail = req.body.email;
@@ -207,11 +208,11 @@ app.get("/inbox", async (req, res) =>{
     res.send("Register successfully");
 });
 
-app.get("/inbox/compose", async (req, res) =>{
+app.get("/compose", async (req, res) =>{
     res.send("Register successfully");
 });
 
-app.get("/inbox/outbox", async (req, res) =>{
+app.get("/outbox", async (req, res) =>{
     res.send("Register successfully");
 });
 

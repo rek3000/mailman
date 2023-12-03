@@ -38,11 +38,10 @@ let conn = null;
  * > Login to Email System using Cookie to remember session 
  * */
 // Home Page
-// TODO Redirect to the login page if there is no cookie sent from client
 app.get("/", async (req, res, next) =>{
     if (!req.cookies.auth) {
         return res.redirect('/login');
-    }
+    } 
     console.log("User login: ");
     console.log(JSON.stringify(req.cookies.auth, null, 2));
     res.render("index", req.cookies.auth);

@@ -5,12 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="/assets/styles.css" rel="stylesheet" type="text/css">
         <title>Mail Man</title>
-        <style>
-            .err {color: red}
-        </style>
     </head>
     <body>
         <%- include('header', {'userEmail': userEmail}) %>
-        <%- include('sidepanel') %>
+        <%- include('sidepanel', {'userEmail': userEmail}) %>
     </body>
 </html>

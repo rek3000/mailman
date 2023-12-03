@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use(express.urlencoded( { extended: true }));
 app.set('view engine', 'ejs');
 app.use(express.json());
-// app.use(multer().none());
+app.use(multer().none());
 app.use(express.static(__dirname + '/public'));
 app.use((err, req, res, next) =>{
     console.error(err.stack);
@@ -56,7 +56,7 @@ app.post("/", async (req, res, next) =>{
     console.log(JSON.stringify(req.cookies.auth, null, 2));
     res.clearCookie("auth");
 
-  // destroy session data
+    // destroy session data
     req.session = null;
     res.redirect('/login');
 });
@@ -65,8 +65,9 @@ app.post("/", async (req, res, next) =>{
 app.get("/login", async (req, res) => {
     if (req.cookies.auth) {
         return res.redirect('/');
-    }
-    res.render('login');
+    } else {
+        res.render('login');
+    } 
 });
 app.post("/login", async (req, res) => {
     const tb = "users";
@@ -82,31 +83,31 @@ app.post("/login", async (req, res) => {
     let userInfo = {};
     if (userEmail === undefined || userEmail === "") {
         respondData["emailError"] = "Email cannot be emptied";
-        res.render('login', respondData);
+        return res.render('login', respondData);
     } else {
         const sql = "SELECT * FROM ?? WHERE ?? = ?";
         try {
             const rows = (await conn.query(sql, [tb, "userEmail", userEmail]))[0];
             if (!(rows.length > 0)) {
                 respondData["emailError"] = "Email Account is not existed";
-                res.render('login', respondData);
+                return res.render('login', respondData);
             }
             userInfo = rows[0];
         } catch (err) {
             console.log(err);
-            res.status(500).send("User cannot login");
-            return;
+            return res.status(500).send("User cannot login");
+            
         }
     }
 
     if (userPassword === undefined || userPassword === "") {
         respondData["passwordError"] = "You must enter the password";
-        res.render('login', respondData);
+        return res.render('login', respondData);
     }
 
     try {
-        console.log(userInfo["userEmail"]);
-        console.log(JSON.stringify(userInfo));
+        // console.log(userInfo["userEmail"]);
+        // console.log(JSON.stringify(userInfo));
         const hashedPassword = crypto.pbkdf2Sync(userPassword, userInfo.salt, 20, 64
             , 'sha256').toString('hex');
         if (hashedPassword === userInfo.userPassword) {
@@ -116,11 +117,11 @@ app.post("/login", async (req, res) => {
             return res.redirect('/');
         } else {
             respondData["passwordError"] = "Password does not match with account in Mail Man";
-            res.render('login', respondData);
+            return res.render('login', respondData);
         }
     } catch (err) {
         console.log(err);
-        res.status(500).send("User cannot login");
+        return res.status(500).send("User cannot login");
     }
 });
 
@@ -144,8 +145,8 @@ app.post("/register", async (req, res, next) =>{
     const userRePassword = req.body.repasswd;
     const salt = crypto.randomBytes(16).toString('hex');
     const hashedPassword = crypto.pbkdf2Sync(userPassword, salt, 20, 64
-    , 'sha256').toString('hex');
-    
+        , 'sha256').toString('hex');
+
     // Register Information
     let userInfo = {
         "userEmail": userEmail,

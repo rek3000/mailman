@@ -1,38 +1,81 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f5f7f8;
+}
+.err {
+  color: salmon;
+}
 .headerContainer {
-    display: flex;
-    flex-grow: 2;
-    flex-direction: row;
-    justify-content: flex-end;
-    border: 3px solid salmon;
-    align-items: flex-start;
+  display: flex;
+  flex-grow: 2;
+  flex-direction: row;
+  justify-content: flex-end;
+  border: 3px solid salmon;
+  align-items: flex-start;
 }
 .headerContainer h2 {
-    flex: 0  1 auto;
+  flex: 0 1 auto;
 }
 .controlPanel {
-    flex: 1 1 auto;
-    font-weight: bold;
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-    flex-wrap:  nowrap;
+  flex: 1 1 auto;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  flex-wrap: nowrap;
 }
 
 .sidePanel {
-    display: flex;
-    flex-direction: column;
-    width: 10%;
+  display: flex;
+  flex-direction: column;
+  width: 10%;
 }
 
 .sidePanel div {
-    margin: 10px;
-    margin-left: 0px;
+  margin: 10px;
+  margin-left: 0px;
 }
 .sidePanel a {
-    border: 3px solid teal;
-    padding: 5px;
+  border: 3px solid teal;
+  padding: 5px;
 }
 
-/* .sidePanel a{ */
-/*     border: 3px solid teal; */
-/* } */
+.login-container {
+  padding: 20px;
+  background: #ffffff;
+  margin-left: 30%;
+  width: 550px;
+  /* text-align center; */
+  font-weight: bold;
+  box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
+  -webkit-box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
+  -moz-box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
+  border-radius: 5px;
+}
+.prompt-container {
+  margin: 5px;
+}
+.prompt-container input {
+  /* text-align: left; */
+  width: 500px;
+  padding: 10px;
+}
+
+.prompt-container button {
+  width: 500px;
+  padding: 10px;
+  text-align: center;
+}
+
+.login-title {
+  /* margin-left: 30%; */
+}
+
+.login-header img {
+  width: 80px;
+  border-radius: 5px;
+  margin-left: 5%;
+}

@@ -4,29 +4,39 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login</title>
-        <style>
-.err {color: red}
-        </style>
+        <link href="/assets/styles.css" rel="stylesheet" type="text/css">
     </head>
-    <h1>Login to Mail Man</h1>
-    <form action="/login" method="post">
-        <div class="container">
-            <div>
-                <label for="uname"><b>Email:</b></label>
-            </div>
-            <div>
-                <input type="text" placeholder="Enter Email" name="email"  value="<%= typeof userEmail !== 'undefined' ? userEmail : '' %>"> </div>
+    <body>
+        <div class="login-header">
+        <img src="favicon.ico" alt="mail man">
+
         </div>
-        <div class="err"><%= typeof emailError !== 'undefined' ? emailError : '' %></div>
-        <div>
-            <label for="passwd"><b>Password:</b></label>
-        </div>
-        <div>
-            <input type="password" placeholder="Enter Password" name="passwd">
-            <div>
-                <div class="err"><%= typeof passwordError !== 'undefined' ? passwordError : '' %></div>
+        <div class="login-container">
+          <div class="login-title">
+          <h1>Login</h1>
+          </div>
+            <form action="/login" method="post">
+                <div class="prompt-container">
+                    <div>
+                        <label for="uname"><b>Email:</b></label>
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Enter Email" name="email"  value="<%= typeof userEmail !== 'undefined' ? userEmail : '' %>"> </div>
+                        <div class="err"><%= typeof emailError !== 'undefined' ? emailError : '' %></div>
+                </div>
+                <div class="prompt-container">
+                    <label for="passwd"><b>Password:</b></label>
+                <div>
+                    <input type="password" placeholder="Enter Password" name="passwd">
+                    <div>
+                        <div class="err"><%= typeof passwordError !== 'undefined' ? passwordError : '' %></div>
+                    </div>
+                </div>
+                </div>
+                <div class="prompt-container" id="login-button">
                 <button type="submit">Login</button>
-            </div>
+                </div>
+            </form> 
         </div>
-    </form> 
+        <body>
 </html>

@@ -174,14 +174,18 @@ app.post("/register", async (req, res, next) => {
       userInfo["emailError"] = "Email account existed";
     }
   }
+
   if (userPassword === undefined || userPassword === "") {
     valid = false;
     userInfo["passwordError"] = "Password cannot be emptied";
-  }
-  if (userPassword != userRePassword) {
+  } else if (userPassword.length < 6) {
+    valid = false;
+    userInfo["passwordError"] = "Password is too short (must be equal or greater than 6 characters)";
+  } else if (userPassword != userRePassword) {
     valid = false;
     userInfo["passwordReEnterError"] = "You must re-enter the same password";
   }
+
 
   if (valid) {
     try {
@@ -207,8 +211,6 @@ app.post("/register", async (req, res, next) => {
       res.status(500).send("User cannot registration");
       return;
     }
-    // res.send("Register successfully");
-    ("Register successfully");
     res.render("redirect");
   } else {
     res.render("register", userInfo);
@@ -217,15 +219,24 @@ app.post("/register", async (req, res, next) => {
 
 // Inbox page
 app.get("/inbox", async (req, res) => {
-  res.send("Register successfully");
+  if (req.cookies.auth) {
+    return res.redirect("/");
+  }
+  return res.send("Inbox Page");
 });
 
 app.get("/compose", async (req, res) => {
-  res.send("Register successfully");
+  if (req.cookies.auth) {
+    return res.redirect("/");
+  }
+  return res.send("Compose Page");
 });
 
 app.get("/outbox", async (req, res) => {
-  res.send("Register successfully");
+  if (req.cookies.auth) {
+    return res.redirect("/");
+  }
+  return res.send("Outbox Page");
 });
 
 app.get("/info", async (req, res) => {

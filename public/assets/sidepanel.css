@@ -1,0 +1,20 @@
+.side-panel {
+  border: 3px solid cyan;
+  display: flex;
+  flex-direction: column;
+  /* width: 10%; */
+  height: 100%;
+  margin-right: 0.2rem;
+}
+
+.side-panel-button {
+  border: 3px solid teal;
+  margin: 10px;
+  margin-left: 0px;
+  text-align: center;
+  width: 100%;
+}
+
+.side-panel a {
+  padding: 5px;
+}

@@ -1,0 +1,33 @@
+.header-container {
+  display: flex;
+  flex-grow: 2;
+  flex-direction: row;
+  align-items: flex-start;
+  /* justify-content: flex-end; */
+  border: 3px solid salmon;
+  padding: 0.4rem;
+  margin-top: 0.6rem;
+  margin-left: 0.6rem;
+  margin-right: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.header-title {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.control-panel {
+  flex: 1 1 auto;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.control-panel-name{
+}
+.control-panel-button button{
+  width: 15%;
+}

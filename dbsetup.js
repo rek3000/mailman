@@ -223,12 +223,6 @@ Beta`,
     {messageID: messages[3]["messageID"], userEmail: "b@b.com", placeholderID: "1", isRead: false},
     {messageID: messages[3]["messageID"], userEmail: "a@a.com", placeholderID: "2", isRead: true},
 
-    {messageID: messages[3]["messageID"], userEmail: "b@b.com", placeholderID: "1", isRead: false},
-    {messageID: messages[3]["messageID"], userEmail: "a@a.com", placeholderID: "2", isRead: true},
-
-    {messageID: messages[4]["messageID"], userEmail: "b@b.com", placeholderID: "1", isRead: false},
-    {messageID: messages[4]["messageID"], userEmail: "c@c.com", placeholderID: "2", isRead: true},
-
     {messageID: messages[4]["messageID"], userEmail: "b@b.com", placeholderID: "1", isRead: false},
     {messageID: messages[4]["messageID"], userEmail: "c@c.com", placeholderID: "2", isRead: true},
 

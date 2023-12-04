@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+:root {
+  --def-bg: "#efccD9";
+  --color1: "#F7B787";
+  --color2: "#EE7214";
+  --color3: "#527853";
+}
+
+.err {
+  color: salmon;
+}
+
+body {
+  background: var(--def-bg);
+}

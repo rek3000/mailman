@@ -1,0 +1,41 @@
+@import "const.css";
+@import "header.css";
+@import "sidepanel.css";
+
+.info-container {
+  display: flex;
+  flex-direction: row;
+  margin-left: 0.6rem;
+  margin-right: 0.6rem;
+}
+
+.email-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.email-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border: 3px solid salmon;
+  flex-wrap: nowrap;
+  padding: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.email-left {
+  /* display: flex; */
+  flex-direction: column;
+  /* display:inline-block; */
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.email-right {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  flex-wrap: nowrap;
+}

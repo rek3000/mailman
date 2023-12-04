@@ -1,47 +1,4 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  background: #f5f7f8;
-}
-.err {
-  color: salmon;
-}
-.headerContainer {
-  display: flex;
-  flex-grow: 2;
-  flex-direction: row;
-  justify-content: flex-end;
-  border: 3px solid salmon;
-  align-items: flex-start;
-}
-.headerContainer h2 {
-  flex: 0 1 auto;
-}
-.controlPanel {
-  flex: 1 1 auto;
-  font-weight: bold;
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  flex-wrap: nowrap;
-}
-
-.sidePanel {
-  display: flex;
-  flex-direction: column;
-  width: 10%;
-}
-
-.sidePanel div {
-  margin: 10px;
-  margin-left: 0px;
-}
-.sidePanel a {
-  border: 3px solid teal;
-  padding: 5px;
-}
+@import "const.css";
 
 .regis-container,
 .login-container {

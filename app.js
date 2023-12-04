@@ -44,7 +44,7 @@ app.get("/", async (req, res, next) => {
   }
   console.log("User login: ");
   console.log(JSON.stringify(req.cookies.auth, null, 2));
-  res.render("index", req.cookies.auth);
+  return res.redirect("inbox");
 });
 
 app.post("/", async (req, res, next) => {
@@ -63,7 +63,7 @@ app.post("/", async (req, res, next) => {
 // Log-in page
 app.get("/login", async (req, res) => {
   if (req.cookies.auth) {
-    return res.redirect("/");
+    return res.redirect("/inbox");
   } else {
     res.render("login");
   }
@@ -218,11 +218,59 @@ app.post("/register", async (req, res, next) => {
 });
 
 // Inbox page
-app.get("/inbox", async (req, res) => {
-  if (req.cookies.auth) {
-    return res.redirect("/");
+async function get_full_name(userEmail) {
+  const tb = 'users';
+  const sql = `SELECT userFullName FROM
+FROM ?? WHERE ?? = ?`;
+  let rows = [];
+  try {
+    [rows] = await conn.query(sql, 
+      [tb, "userEmail", userEmail]);
+
+  } catch (err) {
+    console.log(err);
+    return -1
   }
-  return res.send("Inbox Page");
+    return rows
+}
+async function get_inbox(userEmail) {
+  const sql = `SELECT messages.messageID, messages.messageSubject, messages.messageBody, 
+messages.messageDate, messages.messageAuthorEmail, users.userFullName as messageAuthorFullName, user_has_messages.isRead,
+user_has_messages.placeholderID 
+FROM ??
+INNER JOIN user_has_messages 
+ON user_has_messages.messageID  = messages.messageID 
+INNER JOIN users 
+ON messages.messageAuthorEmail = users.userEmail
+WHERE ?? = 1 AND ?? = ?`;
+  const tb = "messages";
+  let rows = [];
+  try {
+    [rows] = await conn.query(sql, 
+      [tb, "user_has_messages.placeholderID", "user_has_messages.userEmail", userEmail]);
+
+  } catch (err) {
+    console.log(err);
+    return -1
+  }
+    return rows
+}
+
+app.get("/inbox", async (req, res) => {
+  if (!req.cookies.auth) {
+    return res.redirect("/login");
+  }
+  let rows = await get_inbox(req.cookies.auth["userEmail"]);
+  console.log(JSON.stringify(rows, null, 2));
+  // if (rows.length > 0) {
+  //   valid = false;
+  //   userInfo["emailError"] = "Email account existed";
+  // }
+  
+  const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
+  return res.render("inbox", {"userEmail" : req.cookies.auth.userEmail,
+                              "userFullName": userFullName,
+                              "messages": rows});
 });
 
 app.get("/compose", async (req, res) => {

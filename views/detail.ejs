@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/assets/detail.css" rel="stylesheet" type="text/css">
+        <script src="/assets/script.js"></script>
+        <title>Mail Man</title>
+    </head>
+    <body>
+        <%- include('header', {'userEmail': userEmail}) %>
+        <div class="info-container">
+        <%- include('sidepanel', {'userEmail': userEmail}) %>
+        <% const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
+        <div class="email-container">
+          <div class="email-detail">
+            <div><p><%= detail["messageSubject"] %></p> </div>
+            <div><p><%= detail["messageBody"] %></p> </div>
+            <div><p><%= detail["messageAuthorFullName"] %></p> </div>
+          </div>
+        </div>
+        </div>
+    </body>
+</html>

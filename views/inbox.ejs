@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="/assets/inbox.css" rel="stylesheet" type="text/css">
+        <script src="/assets/script.js"></script>
         <title>Mail Man</title>
     </head>
     <body>
@@ -13,7 +14,7 @@
         <% const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
         <div class="email-container">
         <% for (var i = 0; i < messages.length ; i++) { %>
-          <div class="email-info">
+          <a class="email-info" href="/inbox/<%-messages[i]['messageID']%>">
             <div class="email-left">
               <div><p> <%= messages[i]["messageAuthorFullName"] %></p></div>
               <div><p> <%= messages[i]["messageSubject"] %></p></div>
@@ -21,7 +22,7 @@
             <div class="email-right">
               <div><p> <%= messages[i]["messageDate"].getDate() + " " + months[messages[i]["messageDate"].getMonth()] + ", " + messages[i]["messageDate"].getFullYear() %></p></div>
             </div>
-          </div>
+          </a>
             <% } %>
           </div>
         </div>

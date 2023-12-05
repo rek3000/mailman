@@ -220,8 +220,7 @@ app.post("/register", async (req, res, next) => {
 // Inbox page
 async function get_full_name(userEmail) {
   const tb = 'users';
-  const sql = `SELECT userFullName FROM
-FROM ?? WHERE ?? = ?`;
+  const sql = `SELECT userFullName FROM ?? WHERE ?? = ?`;
   let rows = [];
   try {
     [rows] = await conn.query(sql, 
@@ -233,7 +232,7 @@ FROM ?? WHERE ?? = ?`;
   }
     return rows
 }
-async function get_inbox(userEmail) {
+async function get_email_list(userEmail, placeholderID) {
   const sql = `SELECT messages.messageID, messages.messageSubject, messages.messageBody, 
 messages.messageDate, messages.messageAuthorEmail, users.userFullName as messageAuthorFullName, user_has_messages.isRead,
 user_has_messages.placeholderID 
@@ -242,12 +241,33 @@ INNER JOIN user_has_messages
 ON user_has_messages.messageID  = messages.messageID 
 INNER JOIN users 
 ON messages.messageAuthorEmail = users.userEmail
-WHERE ?? = 1 AND ?? = ?`;
+WHERE ?? = ? AND ?? = ?`;
   const tb = "messages";
   let rows = [];
   try {
     [rows] = await conn.query(sql, 
-      [tb, "user_has_messages.placeholderID", "user_has_messages.userEmail", userEmail]);
+      [tb, "user_has_messages.placeholderID", placeholderID, "user_has_messages.userEmail", userEmail]);
+
+  } catch (err) {
+    console.log(err);
+    return -1
+  }
+    return rows
+}
+
+async function get_email_detail(messageID) {
+  const sql = `SELECT messageID, messageSubject, messageBody, 
+messageDate, messageAuthorEmail, userFullName as messageAuthorFullName 
+FROM ??
+INNER JOIN ??
+ON ?? = users.userEmail
+WHERE ?? = ?`;
+  const tb1 = "messages";
+  const tb2 = "users";
+  let rows = [];
+  try {
+    [rows] = await conn.query(sql, 
+      [tb1, tb2,  "messageAuthorEmail", "messageID", messageID]);
 
   } catch (err) {
     console.log(err);
@@ -260,32 +280,45 @@ app.get("/inbox", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/login");
   }
-  let rows = await get_inbox(req.cookies.auth["userEmail"]);
+  let rows = await get_email_list(req.cookies.auth["userEmail"], 1);
   console.log(JSON.stringify(rows, null, 2));
-  // if (rows.length > 0) {
-  //   valid = false;
-  //   userInfo["emailError"] = "Email account existed";
-  // }
-  
-  const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
+  // const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
   return res.render("inbox", {"userEmail" : req.cookies.auth.userEmail,
-                              "userFullName": userFullName,
+                              // "userFullName": userFullName,
                               "messages": rows});
 });
 
+app.get("/inbox/:id", async (req, res) => {
+  if (!req.cookies.auth) {
+    return res.redirect("/login");
+  }
+  const id = req.params.id;
+  let detail = (await get_email_detail(id))[0];
+  // const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
+  console.log(JSON.stringify(detail, null, 2));
+  return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
+                               "detail": detail});
+});
+
+app.get("/outbox", async (req, res) => {
+  if (!req.cookies.auth) {
+    return res.redirect("/");
+  }
+  let messages = await get_email_list(req.cookies.auth["userEmail"], 2);
+  console.log(JSON.stringify(messages, null, 2));
+  const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
+  return res.render("inbox", {"userEmail" : req.cookies.auth.userEmail,
+                              "userFullName": userFullName,
+                              "messages": messages});
+});
+
 app.get("/compose", async (req, res) => {
-  if (req.cookies.auth) {
+  if (!req.cookies.auth) {
     return res.redirect("/");
   }
   return res.send("Compose Page");
 });
 
-app.get("/outbox", async (req, res) => {
-  if (req.cookies.auth) {
-    return res.redirect("/");
-  }
-  return res.send("Outbox Page");
-});
 
 app.get("/info", async (req, res) => {
   try {
@@ -298,33 +331,13 @@ app.get("/info", async (req, res) => {
   }
 });
 
-app.get("/input", (req, res) => {
-  // let name = req.query.name;
-  // let password = req.query.password;
-  // if (! (name && password)) {
-  //     res.status(400).send("Error: Missing required: name and password");
-  // } else {
-  //     res.type("text");
-  //     res.send("Login with username: " + name + "\n" +
-  //         "password: " + password);
-  // }
-});
 
-// app.post("/input", (req, res) => {
-//     let name = req.body.name;
-//     let password = req.body.password;
-//     if (! (name && password)) {
-//         res.status(400).send("Error: Missing required: name and password");
-//     } else {
-//         res.type("text");
-//         res.send("Login with username: " + name + "\n" +
-//             "password: " + password);
-//     }
-// });
 
+// END ROUTING 
 app.use(express.static("public"));
 let appServer = app.listen(8000);
 
+// gratefully closing
 process.on("SIGTERM", () => {
   console.log("SIGTERM singale received.");
   console.log("Closing DB Connection...");

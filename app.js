@@ -355,7 +355,7 @@ async function insert_email(messageInfo) {
     console.log(err);
     return -1;
   }
-    return message;
+    return;
 }
 
 app.post("/compose", async (req, res) => {

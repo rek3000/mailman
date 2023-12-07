@@ -31,11 +31,11 @@
   flex-direction: column;
   /* display:inline-block; */
   flex-wrap: nowrap;
-  width: 100%;
+  width: 80%;
 }
 .email-right {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  width: 20%;
   flex-wrap: nowrap;
 }

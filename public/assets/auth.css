@@ -1,7 +1,21 @@
 @import "const.css";
 
-.regis-container,
-.login-container {
+.auth-header {
+  margin: 2rem;
+}
+
+.auth-header img {
+  width: 80px;
+  border-radius: 5px;
+}
+
+.auth-title h4{
+  font-weight: normal;
+  color: lightcoral;
+}
+
+
+.auth-container {
   padding: 20px;
   background: #ffffff;
   margin-left: 30%;
@@ -16,27 +30,25 @@
 
 .prompt-container {
   margin: 5px;
+  margin-bottom: 1rem;
 }
 
 .prompt-container input {
   /* text-align: left; */
   width: 500px;
   padding: 10px;
+  border: 2px solid coral;
+  border-radius: 5px;
+  /* border-width: 5px; */
 }
 
 .prompt-container button {
   width: 500px;
   padding: 10px;
   text-align: center;
-}
-
-.login-title {
-  /* margin-left: 30%; */
-}
-
-.regis-header img,
-.login-header img {
-  width: 80px;
+  /* border: 2px solid coral; */
+  background: coral;
   border-radius: 5px;
-  margin-left: 5%;
+  cursor: pointer;
 }
+

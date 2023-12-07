@@ -4,28 +4,29 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sign in</title>
-        <link href="/assets/styles.css" rel="stylesheet" type="text/css">
+        <link href="/assets/auth.css" rel="stylesheet" type="text/css">
     </head>
     <body>
-        <div class="login-header">
+        <div class="auth-header">
         <img src="favicon.ico" alt="mail man">
 
         </div>
-        <div class="login-container">
-          <div class="login-title">
+        <div class="auth-container">
+          <div class="auth-title">
           <h1>Login</h1>
+          <h4>Enter your Aether Account details</h4>
           </div>
             <form action="/login" method="post">
                 <div class="prompt-container">
                     <div>
-                        <label for="uname"><b>Email:</b></label>
+                        <label for="uname"><b>Email</b></label>
                     </div>
                     <div>
                         <input type="text" placeholder="Enter Email" name="email"  value="<%= typeof userEmail !== 'undefined' ? userEmail : '' %>"> </div>
                         <div class="err"><%= typeof emailError !== 'undefined' ? emailError : '' %></div>
                 </div>
                 <div class="prompt-container">
-                    <label for="passwd"><b>Password:</b></label>
+                    <label for="passwd"><b>Password</b></label>
                 <div>
                     <input type="password" placeholder="Enter Password" name="passwd">
                     <div>

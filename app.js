@@ -190,14 +190,14 @@ app.post("/register", async (req, res, next) => {
   if (valid) {
     try {
       const sql = "INSERT INTO ?? VALUES(?, ?, ?, ?)";
-      const rs = await conn.query(sql, [
+      await conn.query(sql, [
         tb,
         userEmail,
         hashedPassword,
         userFullName,
         userSalt,
       ]);
-      let row = rs[0][0];
+      // let row = rs[0][0];
 
       console.log("User Registered:");
       console.log(JSON.stringify(userInfo, null, 2));
@@ -233,7 +233,7 @@ async function get_full_name(userEmail) {
     return rows
 }
 async function get_email_list(userEmail, placeholderID) {
-  const sql = `SELECT messages.messageID, messages.messageSubject, messages.messageBody, 
+  const sql = `SELECT messages.messageID, messages.messageSubject, 
 messages.messageDate, messages.messageAuthorEmail, users.userFullName as messageAuthorFullName, user_has_messages.isRead,
 user_has_messages.placeholderID 
 FROM ??
@@ -294,6 +294,8 @@ app.get("/inbox/:id", async (req, res) => {
   }
   const id = req.params.id;
   let detail = (await get_email_detail(id))[0];
+  let messageBodyLines = detail["messageBody"].split("\n")
+  detail["messageBody"] = messageBodyLines
   // const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
   console.log(JSON.stringify(detail, null, 2));
   return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
@@ -316,7 +318,75 @@ app.get("/compose", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/");
   }
-  return res.send("Compose Page");
+  return res.render("compose", {"userEmail": req.cookies.auth.userEmail});
+});
+
+async function insert_email(messageInfo) {
+  const sql1 = `INSERT INTO ?? 
+  VALUES(?, ?, ?, ?, ?)`;
+  const sql2 = `INSERT INTO ?? 
+  VALUES(?, ?, ?, ?)`;
+  const tb1 = "messages";
+  const tb2 = "user_has_messages";
+
+  try {
+    const [message] = await conn.query(sql1, 
+      [tb1, messageInfo["messageID"],
+            messageInfo["messageSubject"],
+            messageInfo["messageBody"],
+            messageInfo["messageDate"],
+            messageInfo["messageAuthorEmail"]]);
+
+    // Sender insert
+    const [sender] = await conn.query(sql2, 
+      [tb2, messageInfo["messageID"],
+            messageInfo["messageAuthorEmail"],
+            "2",
+            true]);
+    // Receiver insert
+    const [receiver] = await conn.query(sql2, 
+      [tb2, messageInfo["messageID"],
+            messageInfo["messageRecipient"],
+            "1",
+            true]);
+    console.log("New message created")
+    console.log(JSON.stringify(message[0], null, 2));
+  } catch (err) {
+    console.log(err);
+    return -1;
+  }
+    return message;
+}
+
+app.post("/compose", async (req, res) => {
+  if (!req.cookies.auth) {
+    return res.redirect("/");
+  }
+  let success = true;
+  let messageInfo = {
+    messageID: crypto.randomUUID(),
+    messageRecipient: req.body.messageRecipient,
+    messageSubject: req.body.messageSubject,
+    messageBody: req.body.messageBody,
+    messageDate: new Date(),
+    messageAuthorEmail: req.cookies.auth.userEmail,
+    messageRecipientError: ""
+  };
+  console.log(JSON.stringify(messageInfo, null, 2));
+
+  if (messageInfo["messageRecipient"] === undefined || messageInfo["messageRecipient"] === "") {
+    messagerecipientError = "An recipient must be selected.";
+    success = false;
+  }
+
+  if (!success) {
+    return res.render("compose", {"userEmail": req.cookies.auth.userMail,
+      "recipientError": messageInfo["messageRecipientError"]
+    });
+  } else if (success) {
+    insert_email(messageInfo);
+    return res.send("Email sent successfully");
+  }
 });
 
 
@@ -336,6 +406,7 @@ app.get("/info", async (req, res) => {
 // END ROUTING 
 app.use(express.static("public"));
 let appServer = app.listen(8000);
+
 
 // gratefully closing
 process.on("SIGTERM", () => {

@@ -1,6 +1,6 @@
 @import "const.css";
-@import "header.css";
-@import "sidepanel.css";
+@import "partials/header.css";
+@import "partials/sidepanel.css";
 
 .info-container {
   display: flex;

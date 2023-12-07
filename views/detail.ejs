@@ -8,15 +8,17 @@
         <title>Mail Man</title>
     </head>
     <body>
-        <%- include('header', {'userEmail': userEmail}) %>
+        <%- include('partials/header', {'userEmail': userEmail}) %>
         <div class="info-container">
-        <%- include('sidepanel', {'userEmail': userEmail}) %>
+        <%- include('partials/sidepanel', {'userEmail': userEmail}) %>
         <% const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
         <div class="email-container">
           <div class="email-detail">
-            <div><p><%= detail["messageSubject"] %></p> </div>
-            <div><p><%= detail["messageBody"] %></p> </div>
-            <div><p><%= detail["messageAuthorFullName"] %></p> </div>
+            <div><p><%- detail["messageSubject"] %></p> </div>
+            <% for (var i = 0; i < detail["messageBody"].length ; i++) { %>
+              <div><p><%- detail["messageBody"][i]%></p> </div>
+            <% } %>
+            <div><p><%- detail["messageAuthorFullName"] %></p> </div>
           </div>
         </div>
         </div>

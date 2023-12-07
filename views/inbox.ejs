@@ -8,9 +8,9 @@
         <title>Mail Man</title>
     </head>
     <body>
-        <%- include('header', {'userEmail': userEmail}) %>
+        <%- include('partials/header', {'userEmail': userEmail}) %>
         <div class="info-container">
-        <%- include('sidepanel', {'userEmail': userEmail}) %>
+        <%- include('partials/sidepanel', {'userEmail': userEmail}) %>
         <% const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
         <div class="email-container">
         <% for (var i = 0; i < messages.length ; i++) { %>

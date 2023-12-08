@@ -14,6 +14,8 @@
         <% const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
         <div class="email-container">
         <% for (var i = 0; i < messages.length ; i++) { %>
+          <div class="email-object">
+            <input type="checkbox" id="email-checkbox" name="emailCheckbox">
           <a class="email-info" href="/outbox/<%-messages[i]['messageID']%>">
             <div class="email-left">
               <div><p> <%= messages[i]["messageAuthorFullName"] %></p></div>
@@ -23,6 +25,7 @@
               <div><p> <%= messages[i]["messageDate"].getDate() + " " + months[messages[i]["messageDate"].getMonth()] + ", " + messages[i]["messageDate"].getFullYear() %></p></div>
             </div>
           </a>
+          </div>
             <% } %>
           </div>
         </div>

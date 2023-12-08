@@ -10,8 +10,6 @@ body {
   flex-direction: row;
   margin-left: 0.6rem;
   margin-right: 0.6rem;
-  height: 80%;
-  width: 80%;
 }
 
 .email-container {

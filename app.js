@@ -369,7 +369,6 @@ app.get("/outbox/:page/:id", async (req, res) => {
   let messageBodyLines = detail["messageBody"].split("\n")
   detail["messageBody"] = messageBodyLines
   console.log(JSON.stringify(detail, null, 2));
-  const totalPages = Math.ceil(messages.length / limit);
   return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
                                "detail": detail,
                                "currentPage": req.params.page});

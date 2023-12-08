@@ -2,14 +2,16 @@
 body {
   display: flex;
   flex-direction: column;
+  align-content: start;
 }
+
 .info-container {
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   margin-left: 0.6rem;
   margin-right: 0.6rem;
   height: 80%;
-  
+  width: 80%;
 }
 
 .email-container {
@@ -20,10 +22,10 @@ body {
 
 .email-object {
   display: flex;
-  /* flex-direction: row; */
-  /* justify-content: flex-end; */
   justify-content: space-evenly;
 }
+
+
 
 #email-checkbox {
   margin: 0.5rem;
@@ -42,6 +44,10 @@ body {
   margin-bottom: 0.2rem;
   border-radius: 5px;
   flex: 1 80%;
+}
+
+.email-info.read div p{
+  font-weight: bold;
 }
 
 .email-left {

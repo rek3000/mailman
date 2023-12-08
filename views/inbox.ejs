@@ -16,8 +16,8 @@
         <% for (var i = 0; i < messages.length ; i++) { %>
           <div class="email-object">
           <input type="checkbox" id="email-checkbox" name="emailCheckbox">
-          <a class="email-info" href="/inbox/<%-messages[i]['messageID']%>">
-            <div class="email-left" is-read=<%messages[i]["isRead"]%>>
+          <a class="email-info <%=String(messages[i]['isRead']) == '0' ? 'notread' : 'read' %>" href="/inbox/<%-messages[i]['messageID']%>">
+            <div class="email-left" >
               <div><p><%= messages[i]["messageAuthorFullName"] %></p></div>
               <div><p><%= messages[i]["messageSubject"] %></p></div>
             </div>

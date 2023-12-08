@@ -6,7 +6,10 @@
   border-radius: 5px;
   background: var(--color1);
   padding: 0.5rem;
-  flex: 1 20%;
+  flex: 0 0 10rem;
+  /* flex: none; */
+  height: 100%;
+  align-content: start;
 }
 
 .side-panel-button {

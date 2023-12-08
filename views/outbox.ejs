@@ -30,16 +30,16 @@
           </div>
         </div>
           <ul class="pagination">
-            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-            <a href="/outbox/<%-currentPage - 1%>" class="page-link nav">Previous</a>
+            <li class="page-item <%= currentPage === 1 ? 'disabled' : 'enabled' %>">
+            <a href="/outbox/<%=currentPage - 1%>" class="page-link nav">Previous</a>
             </li>
             <% for (let i = 1; i <= totalPages; i++) { %>
               <li class="page-item <%= currentPage === i ? 'active' : 'inactive' %>">
                 <a href="/outbox/<%-i%>" class="page-link"><%-i %></a>
                 </li>
                 <% } %>
-                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                <a href="/outbox/<%-currentPage + 1 %>" class="page-link">Next</a>
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : 'enabled' %>">
+                <a href="/outbox/<%=currentPage + 1 %>" class="page-link">Next</a>
                 </li>
                 </ul>
     </body>

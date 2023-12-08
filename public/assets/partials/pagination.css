@@ -1,12 +1,28 @@
-.page-item.active {
+.pagination {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  /* margin: 0 auto; */
+  justify-content: center;
+}
+
+.pagination > li {
+  margin-right: 0.4rem;
+}
+
+
+.page-item.active a {
+  color: gray;
+}
+
+.page-item.inactive {
   font-weight: bold;
 }
 
-.page-item.inactive a {
-  color: gray;
+.page-item.enabled {
+  font-weight: bold;
 }
 
 .page-item.disabled {
   pointer-events: none;
-  color: gray;
 }

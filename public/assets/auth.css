@@ -1,12 +1,16 @@
-@import "const.css";
+@import "const.css"; 
 
 .auth-header {
   margin: 2rem;
 }
 
 .auth-header img {
-  width: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 5px;
+  box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
+  -webkit-box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
+  -moz-box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
 }
 
 .auth-title h4{
@@ -14,10 +18,9 @@
   color: lightcoral;
 }
 
-
 .auth-container {
   padding: 20px;
-  background: #ffffff;
+  background: var(--hl-bg);
   margin-left: 30%;
   width: 550px;
   /* text-align center; */

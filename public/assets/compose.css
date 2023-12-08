@@ -2,6 +2,10 @@
 @import "partials/header.css";
 @import "partials/sidepanel.css";
 
+#compose-button {
+  background: var(--hl-bg);
+}
+
 .info-container {
   display: flex;
   flex-direction: row;

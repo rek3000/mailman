@@ -3,6 +3,7 @@
 @import "partials/sidepanel.css";
 @import "partials/home.css";
 
-#inbox-button {
+
+#outbox-button {
   background: var(--hl-bg);
 }

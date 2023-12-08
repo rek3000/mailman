@@ -1,0 +1,60 @@
+@import "const.css";
+body {
+  display: flex;
+  flex-direction: column;
+}
+.info-container {
+  display: inline-flex;
+  flex-direction: row;
+  margin-left: 0.6rem;
+  margin-right: 0.6rem;
+  height: 80%;
+  
+}
+
+.email-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.email-object {
+  display: flex;
+  /* flex-direction: row; */
+  /* justify-content: flex-end; */
+  justify-content: space-evenly;
+}
+
+#email-checkbox {
+  margin: 0.5rem;
+  width: 20px;
+}
+
+.email-info {
+  background: var(--hl-bg);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border: 3px solid salmon;
+  flex-wrap: nowrap;
+  padding: 0.5rem;
+  margin-bottom: 0.2rem;
+  border-radius: 5px;
+  flex: 1 80%;
+}
+
+.email-left {
+  /* display: flex; */
+  flex-direction: column;
+  /* display:inline-block; */
+  flex-wrap: nowrap;
+  flex: 1 80%;
+  /* width: 80%; */
+}
+.email-right {
+  display: flex;
+  justify-content: flex-end;
+  width: 20%;
+  flex-wrap: nowrap;
+}

@@ -1,18 +1,29 @@
+:root {
+  --def-bg: #eef5ff;
+  --hl-bg: #FAF6F0;
+  --color1: #F7B787;
+  --color2: #EE7214;
+  --color3: #527853;
+}
+
+button {
+  cursor: pointer;
+}
 * {
   box-sizing: border-box;
   margin: 0;
+  font-family: sans-serif;
 }
 
 a {
   text-decoration: none;
+  color: black;
 }
 
-:root {
-  --def-bg: "#efccD9";
-  --color1: "#F7B787";
-  --color2: "#EE7214";
-  --color3: "#527853";
+a:hover {
+  color: var(--color3);
 }
+
 
 .err {
   color: salmon;

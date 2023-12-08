@@ -309,9 +309,23 @@ app.get("/outbox", async (req, res) => {
   let messages = await get_email_list(req.cookies.auth["userEmail"], 2);
   console.log(JSON.stringify(messages, null, 2));
   const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
-  return res.render("inbox", {"userEmail" : req.cookies.auth.userEmail,
+  return res.render("outbox", {"userEmail" : req.cookies.auth.userEmail,
                               "userFullName": userFullName,
                               "messages": messages});
+});
+
+app.get("/outbox/:id", async (req, res) => {
+  if (!req.cookies.auth) {
+    return res.redirect("/login");
+  }
+  const id = req.params.id;
+  let detail = (await get_email_detail(id))[0];
+  let messageBodyLines = detail["messageBody"].split("\n")
+  detail["messageBody"] = messageBodyLines
+  // const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
+  console.log(JSON.stringify(detail, null, 2));
+  return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
+                               "detail": detail});
 });
 
 app.get("/compose", async (req, res) => {

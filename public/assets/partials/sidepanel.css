@@ -1,20 +1,29 @@
 .side-panel {
-  border: 3px solid cyan;
+  border: 3px solid coral;
   display: flex;
   flex-direction: column;
-  /* width: 10%; */
-  height: 100%;
-  margin-right: 0.2rem;
+  margin-right: 0.5rem;
+  border-radius: 5px;
+  background: var(--color1);
+  padding: 0.5rem;
+  flex: 1 20%;
 }
 
 .side-panel-button {
-  border: 3px solid teal;
-  margin: 10px;
-  margin-left: 0px;
+  /* border: 1px solid teal; */
+  border-radius: 5px;
+  margin-bottom: 10px;
   text-align: center;
   width: 100%;
+  text-align: left;
+  display: flex;
 }
 
-.side-panel a {
+.side-panel-button:hover {
+  background: var(--hl-bg);
+}
+.side-panel-button a {
+  flex: 1 100%;
   padding: 5px;
+  width: auto;
 }

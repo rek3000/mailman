@@ -1,0 +1,12 @@
+.page-item.active {
+  font-weight: bold;
+}
+
+.page-item.inactive a {
+  color: gray;
+}
+
+.page-item.disabled {
+  pointer-events: none;
+  color: gray;
+}

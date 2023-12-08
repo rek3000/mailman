@@ -16,5 +16,7 @@
 }
 
 .email-detail {
+  border: 3px solid salmon;
+  padding: 0.5rem;
 
 }

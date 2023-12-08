@@ -1,4 +1,4 @@
-@import "const.css";
+@import "../const.css";
 body {
   display: flex;
   flex-direction: column;
@@ -46,7 +46,7 @@ body {
   flex: 1 80%;
 }
 
-.email-info.read div p{
+.email-info.notread div p{
   font-weight: bold;
 }
 

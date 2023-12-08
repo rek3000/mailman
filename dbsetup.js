@@ -30,7 +30,11 @@ let conn = null;
     line = line.trim();
     tmp += line + "\r\n";
     if (line.endsWith(";")) {
-      await conn.execute(tmp);
+      try {
+        await conn.execute(tmp);
+      } catch (err) {
+        console.log(err);
+      }
       tmp = "";
     }
   }
@@ -207,6 +211,34 @@ Beta`,
       messageDate: new Date(),
       messageAuthorEmail: "b@b.com"
     },
+    {messageID: crypto.randomUUID(), messageSubject: "Reminder of WPR Deadline",
+      messageBody: `Hi Ash,
+I hope this email finds you well.
+I'm writing to you today to remind you about incomming WPR Deadline on 09/12/2023.`,
+      messageDate: new Date(),
+      messageAuthorEmail: "b@b.com"
+    },
+    {messageID: crypto.randomUUID(), messageSubject: "Coffee? ☕",
+      messageBody: `Hey Ash,
+Free this week? Would love to catch up over coffee! Been meaning to chat for ages.
+Let me know!`,
+      messageDate: new Date(),
+      messageAuthorEmail: "b@b.com"
+    },
+    {messageID: crypto.randomUUID(), messageSubject: "Movie Night?",
+      messageBody: `Hey Ash,
+Fancy a movie night this weekend? There's this new comedy everyone's raving about.
+
+Let me know if you're up for it!`,
+      messageDate: new Date(),
+      messageAuthorEmail: "b@b.com"
+    },
+    {messageID: crypto.randomUUID(), messageSubject: "Quick Lunch?",
+      messageBody: `Hey Ash,
+Any chance you're free for a quick lunch today? I'm in your neck of the woods and could use a good chat!`,
+      messageDate: new Date(),
+      messageAuthorEmail: "b@b.com"
+    },
   ];
 
   // placeholderID 1 = inbox && 2 = outbox
@@ -234,6 +266,18 @@ Beta`,
 
     {messageID: messages[7]["messageID"], userEmail: "c@c.com", placeholderID: "1", isRead: false},
     {messageID: messages[7]["messageID"], userEmail: "b@b.com", placeholderID: "2", isRead: true},
+
+    {messageID: messages[8]["messageID"], userEmail: "a@a.com", placeholderID: "1", isRead: false},
+    {messageID: messages[8]["messageID"], userEmail: "b@b.com", placeholderID: "2", isRead: true},
+
+    {messageID: messages[9]["messageID"], userEmail: "a@a.com", placeholderID: "1", isRead: false},
+    {messageID: messages[9]["messageID"], userEmail: "b@b.com", placeholderID: "2", isRead: true},
+
+    {messageID: messages[10]["messageID"], userEmail: "a@a.com", placeholderID: "1", isRead: false},
+    {messageID: messages[10]["messageID"], userEmail: "b@b.com", placeholderID: "2", isRead: true},
+
+    {messageID: messages[11]["messageID"], userEmail: "a@a.com", placeholderID: "1", isRead: false},
+    {messageID: messages[11]["messageID"], userEmail: "b@b.com", placeholderID: "2", isRead: true},
   ];
 
   // console.log(JSON.stringify(messages, null, 2));

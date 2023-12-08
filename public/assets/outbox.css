@@ -2,6 +2,7 @@
 @import "partials/header.css";
 @import "partials/sidepanel.css";
 @import "partials/home.css";
+@import "partials/pagination.css";
 
 
 #outbox-button {

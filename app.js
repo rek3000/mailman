@@ -232,7 +232,7 @@ async function get_full_name(userEmail) {
   }
     return rows
 }
-async function get_email_list(userEmail, placeholderID) {
+async function get_email_list(userEmail, placeholderID, pagination) {
   const sql = `SELECT messages.messageID, messages.messageSubject, 
 messages.messageDate, messages.messageAuthorEmail, users.userFullName as messageAuthorFullName, user_has_messages.isRead as isRead,
 user_has_messages.placeholderID 
@@ -241,12 +241,13 @@ INNER JOIN user_has_messages
 ON user_has_messages.messageID  = messages.messageID 
 INNER JOIN users 
 ON messages.messageAuthorEmail = users.userEmail
-WHERE ?? = ? AND ?? = ?`;
+WHERE ?? = ? AND ?? = ?
+LIMIT ? OFFSET ?`;
   const tb = "messages";
   let messages = [];
   try {
     [messages] = await conn.query(sql, 
-      [tb, "user_has_messages.placeholderID", placeholderID, "user_has_messages.userEmail", userEmail]);
+      [tb, "user_has_messages.placeholderID", placeholderID, "user_has_messages.userEmail", userEmail, pagination["limit"], pagination["offset"]]);
 
   } catch (err) {
     console.log(err);
@@ -276,19 +277,48 @@ WHERE ?? = ?`;
     return rows
 }
 
+async function get_total_messages(userEmail, placeholderID) {
+  const sql = `SELECT COUNT(*) FROM ??
+WHERE ?? = ? AND ?? = ?`;
+  const tb = "user_has_messages";
+  let count = []
+  try {
+    [count] = await conn.query(sql,
+    [tb, "userEmail", userEmail, "placeholderID", placeholderID]);
+  } catch (err) {
+    console.log(err);
+    return -1;
+  }
+  return count[0]['COUNT(*)'];
+}
+
 app.get("/inbox", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/login");
   }
-  let messages = await get_email_list(req.cookies.auth["userEmail"], 1);
-  console.log(JSON.stringify(messages, null, 2));
-  // const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
-  return res.render("inbox", {"userEmail" : req.cookies.auth.userEmail,
-                              // "userFullName": userFullName,
-                              "messages": messages});
+  return res.redirect("/inbox/1");
 });
 
-app.get("/inbox/:id", async (req, res) => {
+app.get("/inbox/:page", async (req,res) =>{
+  const limit = 5;
+  const page = parseInt(req.params.page) || 1;
+  const offset = (page - 1) * limit;
+  const pagination = {limit: limit, offset: offset}
+  let messages = await get_email_list(req.cookies.auth.userEmail, 1, pagination);
+  let total_messages_number = await get_total_messages(req.cookies.auth.userEmail, 1)
+  let totalPages = Math.ceil(total_messages_number / limit);
+  if (total_messages_number < 5) {
+    totalPages = 1;
+  }
+  console.log(JSON.stringify(messages, null, 2));
+  console.log(totalPages);
+  return res.render("inbox", {"userEmail" : req.cookies.auth.userEmail,
+                              "messages": messages,
+                              "currentPage": page,
+                              "totalPages": totalPages});
+});
+
+app.get("/inbox/:page/:id", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/login");
   }
@@ -296,25 +326,41 @@ app.get("/inbox/:id", async (req, res) => {
   let detail = (await get_email_detail(id))[0];
   let messageBodyLines = detail["messageBody"].split("\n")
   detail["messageBody"] = messageBodyLines
-  // const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
   console.log(JSON.stringify(detail, null, 2));
   return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
-                               "detail": detail});
+                               "detail": detail,
+                               "currentPage": req.params.page});
 });
 
 app.get("/outbox", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/");
   }
-  let messages = await get_email_list(req.cookies.auth["userEmail"], 2);
-  console.log(JSON.stringify(messages, null, 2));
-  const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
-  return res.render("outbox", {"userEmail" : req.cookies.auth.userEmail,
-                              "userFullName": userFullName,
-                              "messages": messages});
+  return res.redirect("outbox/1");
 });
 
-app.get("/outbox/:id", async (req, res) => {
+app.get("/outbox/:page", async (req, res) =>{
+  const limit = 5;
+  const page = parseInt(req.params.page) || 1;
+  const offset = (page - 1) * limit;
+  const pagination = {limit: limit, offset: offset}
+  let messages = await get_email_list(req.cookies.auth["userEmail"], 2, pagination);
+  console.log(JSON.stringify(messages, null, 2));
+  const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
+  const total_messages_number = await get_total_messages(req.cookies.auth.userEmail, 2)
+  let totalPages = Math.ceil(total_messages_number / limit);
+  if (total_messages_number < 5) {
+    totalPages = 1;
+  }
+  console.log(totalPages);
+  return res.render("outbox", {"userEmail" : req.cookies.auth.userEmail,
+                              "userFullName": userFullName,
+                              "messages": messages,
+                              "currentPage": page,
+                              "totalPages": totalPages});
+});
+
+app.get("/outbox/:page/:id", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/login");
   }
@@ -322,10 +368,11 @@ app.get("/outbox/:id", async (req, res) => {
   let detail = (await get_email_detail(id))[0];
   let messageBodyLines = detail["messageBody"].split("\n")
   detail["messageBody"] = messageBodyLines
-  // const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
   console.log(JSON.stringify(detail, null, 2));
+  const totalPages = Math.ceil(messages.length / limit);
   return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
-                               "detail": detail});
+                               "detail": detail,
+                               "currentPage": req.params.page});
 });
 
 app.get("/compose", async (req, res) => {
@@ -362,7 +409,7 @@ async function insert_email(messageInfo) {
       [tb2, messageInfo["messageID"],
             messageInfo["messageRecipient"],
             "1",
-            true]);
+            false]);
     console.log("New message created")
     console.log(JSON.stringify(message[0], null, 2));
   } catch (err) {
@@ -402,20 +449,6 @@ app.post("/compose", async (req, res) => {
     return res.send("Email sent successfully");
   }
 });
-
-
-app.get("/info", async (req, res) => {
-  try {
-    let contents = await fs.readFile("./src/solaris.json", "utf8");
-    contents = JSON.parse(contents);
-    res.json(contents);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Sever-side error!");
-  }
-});
-
-
 
 // END ROUTING 
 app.use(express.static("public"));

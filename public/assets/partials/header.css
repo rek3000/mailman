@@ -20,6 +20,10 @@
 
 .header-title img {
   width: 100px;
+  border-radius: 5px;
+  box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
+  -webkit-box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
+  -moz-box-shadow: 10px 9px 28px -5px rgba(0, 0, 0, 0.51);
 }
 
 .control-panel {

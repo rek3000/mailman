@@ -356,15 +356,34 @@ app.post("/delete", async (req, res) => {
   res.json({ message: 'Email deleted successfully' });
 });
 
+async function change_read_status(userEmail, messageID) {
+  const tb = "user_has_messages";
+  const sql = `UPDATE ??
+  SET ?? = ?
+  WHERE ?? = ?
+  AND ?? = ?
+    `;
+  let updated = [];
+  try {
+    [updated] = await conn.query(sql,
+    [tb, "isRead", true, "messageID", messageID, "userEmail", userEmail]);
+  } catch (err) {
+    console.log(err);
+    return -1;
+  }
+
+}
+
 app.get("/inbox/:page/:id", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/login");
   }
   const id = req.params.id;
   let detail = (await get_email_detail(id))[0];
-  let messageBodyLines = detail["messageBody"].split("\n")
-  detail["messageBody"] = messageBodyLines
+  const messageBodyLines = detail["messageBody"].split("\n")
+  detail["messageBody"] = messageBodyLines;
   console.log(JSON.stringify(detail, null, 2));
+  change_read_status(req.cookies.auth.userEmail, id)
   return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
                                "detail": detail,
                                "currentPage": req.params.page});

@@ -1,46 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/assets/outbox.css" rel="stylesheet" type="text/css">
-        <script src="/assets/script.js"></script>
-        <title>Aether - Outbox</title>
-    </head>
-    <body>
-        <%- include('partials/header', {'userEmail': userEmail}) %>
-        <div class="info-container">
-        <%- include('partials/sidepanel', {'userEmail': userEmail}) %>
-        <% const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
-        <div class="email-container">
-        <% for (var i = 0; i < messages.length ; i++) { %>
-          <div class="email-object">
-            <input type="checkbox" id="email-checkbox" name="emailCheckbox">
-          <a class="email-info <%=String(messages[i]['isRead']) == '0' ? 'notread' : 'read' %>" href="/outbox/<%-currentPage%>/<%-messages[i]['messageID']%>">
-            <div class="email-left">
-              <div><p> <%= messages[i]["messageAuthorFullName"] %></p></div>
-              <div><p> <%= messages[i]["messageSubject"] %></p></div>
-            </div>
-            <div class="email-right">
-              <div><p> <%= messages[i]["messageDate"].getDate() + " " + months[messages[i]["messageDate"].getMonth()] + ", " + messages[i]["messageDate"].getFullYear() %></p></div>
-            </div>
-          </a>
-          </div>
-            <% } %>
-          </div>
-        </div>
-          <ul class="pagination">
-            <li class="page-item <%= currentPage === 1 ? 'disabled' : 'enabled' %>">
-            <a href="/outbox/<%=currentPage - 1%>" class="page-link nav">Previous</a>
-            </li>
-            <% for (let i = 1; i <= totalPages; i++) { %>
-              <li class="page-item <%= currentPage === i ? 'active' : 'inactive' %>">
-                <a href="/outbox/<%-i%>" class="page-link"><%-i %></a>
-                </li>
-                <% } %>
-                <li class="page-item <%= currentPage === totalPages ? 'disabled' : 'enabled' %>">
-                <a href="/outbox/<%=currentPage + 1 %>" class="page-link">Next</a>
-                </li>
-                </ul>
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/assets/outbox.css" rel="stylesheet" type="text/css">
+    <script src="/assets/script.js"></script>
+    <title>Aether - Outbox</title>
+</head>
+
+<body>
+    <%- include('partials/home', {'userEmail': userEmail, 'messages' : messages, 'name' : 'outbox' }) %>
+        <%- include('./partials/pagination', {'currentPage': currentPage, 'totalPages' : totalPages, 'name' : 'outbox'
+            }) %>
+</body>
+
 </html>

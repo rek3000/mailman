@@ -104,8 +104,6 @@ app.post("/login", async (req, res) => {
   }
 
   try {
-    // console.log(userInfo["userEmail"]);
-    // console.log(JSON.stringify(userInfo));
     const hashedPassword = crypto
       .pbkdf2Sync(userPassword, userInfo.userSalt, 20, 64, "sha256")
       .toString("hex");
@@ -186,7 +184,6 @@ app.post("/register", async (req, res, next) => {
     userInfo["passwordReEnterError"] = "You must re-enter the same password";
   }
 
-
   if (valid) {
     try {
       const sql = "INSERT INTO ?? VALUES(?, ?, ?, ?)";
@@ -197,7 +194,6 @@ app.post("/register", async (req, res, next) => {
         userFullName,
         userSalt,
       ]);
-      // let row = rs[0][0];
 
       console.log("User Registered:");
       console.log(JSON.stringify(userInfo, null, 2));
@@ -300,6 +296,9 @@ app.get("/inbox", async (req, res) => {
 });
 
 app.get("/inbox/:page", async (req,res) =>{
+  if (!req.cookies.auth) {
+    return res.redirect("/login");
+  }
   const limit = 5;
   const page = parseInt(req.params.page) || 1;
   const offset = (page - 1) * limit;
@@ -310,12 +309,51 @@ app.get("/inbox/:page", async (req,res) =>{
   if (total_messages_number < 5) {
     totalPages = 1;
   }
-  console.log(JSON.stringify(messages, null, 2));
-  console.log(totalPages);
+  // console.log(JSON.stringify(messages, null, 2));
+  // console.log("TOTALPAGES:" + totalPages);
   return res.render("inbox", {"userEmail" : req.cookies.auth.userEmail,
                               "messages": messages,
                               "currentPage": page,
                               "totalPages": totalPages});
+});
+
+async function delete_messages_from_user(messageID, placeholderID) {
+  const sql = `DELETE FROM ?? 
+    WHERE ?? = ? 
+    AND ?? = ?`;
+  const tb = "user_has_messages";
+  let deleted = [];
+  try {
+    [deleted] = await conn.query(sql,
+    [tb, "messageID", messageID, "placeholderID", placeholderID]);
+  } catch (err) {
+    console.log(err);
+    return -1;
+  }
+  return deleted[0];
+
+}
+
+// Delete only email rows in table 'user_has_messages'
+app.post("/delete", async (req, res) => {
+  if (!req.cookies.auth) {
+    return res.redirect("/login");
+  }
+  const messageIDs = req.body.messageIDs;
+  const placeholder = req.body.placeholder;
+  console.log(messageIDs);
+  console.log(placeholder);
+
+  if (placeholder === 'inbox') {
+    for (const messageID of messageIDs) {
+      delete_messages_from_user(messageID, 1);
+    }
+  } else if (placeholder === 'outbox') {
+    for (const messageID of messageIDs) {
+      delete_messages_from_user(messageID, 2);
+    }
+  }
+  res.json({ message: 'Email deleted successfully' });
 });
 
 app.get("/inbox/:page/:id", async (req, res) => {
@@ -340,19 +378,22 @@ app.get("/outbox", async (req, res) => {
 });
 
 app.get("/outbox/:page", async (req, res) =>{
+  if (!req.cookies.auth) {
+    return res.redirect("/login");
+  }
   const limit = 5;
   const page = parseInt(req.params.page) || 1;
   const offset = (page - 1) * limit;
   const pagination = {limit: limit, offset: offset}
   let messages = await get_email_list(req.cookies.auth["userEmail"], 2, pagination);
-  console.log(JSON.stringify(messages, null, 2));
+  // console.log(JSON.stringify(messages, null, 2));
   const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
   const total_messages_number = await get_total_messages(req.cookies.auth.userEmail, 2)
   let totalPages = Math.ceil(total_messages_number / limit);
   if (total_messages_number < 5) {
     totalPages = 1;
   }
-  console.log(totalPages);
+  // console.log(totalPages);
   return res.render("outbox", {"userEmail" : req.cookies.auth.userEmail,
                               "userFullName": userFullName,
                               "messages": messages,
@@ -448,6 +489,7 @@ app.post("/compose", async (req, res) => {
     return res.send("Email sent successfully");
   }
 });
+
 
 // END ROUTING 
 app.use(express.static("public"));

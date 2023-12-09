@@ -1,26 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/assets/detail.css" rel="stylesheet" type="text/css">
-        <script src="/assets/script.js"></script>
-        <title>Aether - Detail</title>
-    </head>
-    <body>
-        <%- include('partials/header', {'userEmail': userEmail}) %>
-        <div class="info-container">
-        <%- include('partials/sidepanel', {'userEmail': userEmail}) %>
-        <% const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
-        <div class="email-container">
-          <div class="email-detail">
-            <div><p><%- detail["messageSubject"] %></p> </div>
-            <% for (var i = 0; i < detail["messageBody"].length ; i++) { %>
-              <div><p><%- detail["messageBody"][i]%></p> </div>
-            <% } %>
-            <div><p><%- detail["messageAuthorFullName"] %></p> </div>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/assets/detail.css" rel="stylesheet" type="text/css">
+  <script src="/assets/script.js"></script>
+  <title>Aether - Detail</title>
+</head>
+
+<body>
+  <%- include('partials/header', {'userEmail': userEmail}) %>
+    <div class="info-container">
+      <%- include('partials/sidepanel', {'userEmail': userEmail}) %>
+        <% const months=["Jan", "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec" ]
+          %>
+          <div class="email-container">
+            <div class="email-detail">
+              <div>
+                <p><%- detail["messageSubject"] %></p>
+              </div>
+              <% for (var i=0; i < detail["messageBody"].length ; i++) { %>
+                <div>
+                  <p><%- detail["messageBody"][i]%></p>
+                </div>
+                <% } %>
+                  <div>
+                    <p><%- detail["messageAuthorFullName"] %></p>
+                  </div>
+            </div>
           </div>
-        </div>
-        </div>
-    </body>
+    </div>
+</body>
+
 </html>

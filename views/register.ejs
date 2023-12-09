@@ -1,51 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sign up</title>
-        <link href="/assets/auth.css" rel="stylesheet" type="text/css">
-    </head>
-    <body>
-        <div class="auth-header">
-          <img src="assets/aether.png" alt="mail man">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up</title>
+    <link href="/assets/auth.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div class="auth-header">
+        <img src="assets/aether.png" alt="mail man">
+
+    </div>
+    <div class="auth-container">
+        <div class="auth-title">
+            <h1>Create your Aether Account</h1>
+            <h4>Enter your details to access the Aether</h4>
         </div>
-        <div class="auth-container">
-          <div class="auth-title">
-          <h1>Create your Aether Account</h1>
-          <h4>Enter your details to access the Aether</h4>
-          </div>
-          <form action="/register" method="post">
+        <form action="/register" method="post">
             <div class="prompt-container">
                 <label for="uname"><b>Email</b></label>
                 <div>
-                    <input type="text" placeholder="Enter Desired Email" name="email" value="<%= typeof userEmail !== 'undefined' ? userEmail : '' %>">
+                    <input type="text" placeholder="Enter Desired Email" name="email"
+                        value="<%= typeof userEmail !== 'undefined' ? userEmail : '' %>">
                 </div>
-                <div class="err"><%= typeof emailError !== 'undefined' ? emailError : '' %></div>
+                <div class="err">
+                    <%= typeof emailError !=='undefined' ? emailError : '' %>
+                </div>
             </div>
             <div class="prompt-container">
                 <label for="uname"><b>Full Name</b></label>
                 <div>
-                    <input type="text" placeholder="Enter Your Full Name" name="fullname" value="<%= typeof userFullName !== 'undefined' ? userFullName : '' %>">
+                    <input type="text" placeholder="Enter Your Full Name" name="fullname"
+                        value="<%= typeof userFullName !== 'undefined' ? userFullName : '' %>">
                 </div>
             </div>
             <div class="prompt-container">
                 <label for="passwd"><b>Password</b></label>
                 <div>
-                    <input type="password" placeholder="Enter Your Password" name="passwd" >
+                    <input type="password" placeholder="Enter Your Password" name="passwd">
                 </div>
-                    <div class="err"><%= typeof passwordError !== 'undefined' ? passwordError : '' %></div>
-                    <div>
-                        <input type="password" placeholder="Re-Enter Your Password" name="repasswd">
-                    </div>
-                    <div class="err"><%= typeof passwordReEnterError !== 'undefined' ? passwordReEnterError : '' %></div>
+                <div class="err">
+                    <%= typeof passwordError !=='undefined' ? passwordError : '' %>
+                </div>
+                <div>
+                    <input type="password" placeholder="Re-Enter Your Password" name="repasswd">
+                </div>
+                <div class="err">
+                    <%= typeof passwordReEnterError !=='undefined' ? passwordReEnterError : '' %>
+                </div>
             </div>
             <div class="prompt-container">
-                        <button type="submit">Register</button>
+                <button type="submit">Register</button>
             </div>
-        </form> 
-            <p>Already have an account? <a href='/login'>Sign in</a></p>
-        </div>
-    </body>
+        </form>
+        <p>Already have an account? <a href='/login'>Sign in</a></p>
+    </div>
+</body>
+
 </html>

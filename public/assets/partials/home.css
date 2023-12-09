@@ -1,4 +1,7 @@
 @import "../const.css";
+@import "./header.css";
+@import "./sidepanel.css";
+@import "./pagination.css";
 body {
   display: flex;
   flex-direction: column;

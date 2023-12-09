@@ -1,0 +1,38 @@
+<%- include('./header', {'userEmail': userEmail}) %>
+  <div class="info-container">
+    <%- include('./sidepanel', {'userEmail': userEmail}) %>
+      <% const months=["Jan", "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec" ] %>
+        <div class="email-container">
+          <form  id="delete-form" action="/delete" method="post">
+            <button id="delete-button" name="placeholder" value="<%=name%>" type="submit">Delete</button>
+          <% for (var i=0; i < messages.length ; i++) { %>
+            <div class="email-object" id="<%=messages[i]['messageID']%>">
+              <input type="checkbox" class="email-checkbox" name="emailCheckbox" value="<%=messages[i]['messageID']%>">
+              <a class="email-info <%=String(messages[i]['isRead']) == '0' ? 'notread' : 'read'%>" "
+                href="/<%-name%>/<%-currentPage%>/<%-messages[i]['messageID']%>">
+                <div class="email-left">
+                  <div>
+                    <p>
+                      <%= messages[i]["messageAuthorFullName"] %>
+                    </p>
+                  </div>
+                  <div>
+                    <p>
+                      <%= messages[i]["messageSubject"] %>
+                    </p>
+                  </div>
+                </div>
+                <div class="email-right">
+                  <div>
+                    <p>
+                      <%= messages[i]["messageDate"].getDate() + " " + months[messages[i]["messageDate"].getMonth()]
+                        + ", " + messages[i]["messageDate"].getFullYear() %>
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <% } %>
+          </form>
+        </div>
+  </div>

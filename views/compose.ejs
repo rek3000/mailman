@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/assets/compose.css" rel="stylesheet" type="text/css">
-        <script src="/assets/script.js"></script>
-        <title>Aether</title>
-    </head>
-    <body>
-        <%- include('partials/header', {'userEmail': userEmail}) %>
-        <div class="info-container">
-        <%- include('partials/sidepanel', {'userEmail': userEmail}) %>
-        <% const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/assets/compose.css" rel="stylesheet" type="text/css">
+  <script src="/assets/script.js"></script>
+  <title>Aether</title>
+</head>
+
+<body>
+  <%- include('partials/header', {'userEmail': userEmail}) %>
+    <div class="info-container">
+      <%- include('partials/sidepanel', {'userEmail': userEmail}) %>
+        <% const months=["Jan", "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec" ]
+          %>
           <div class="email-container">
             <div class="regis-container">
               <h1>New message</h1>
@@ -19,29 +22,34 @@
                 <div class="prompt-container">
                   <label for="uname"><b>To:</b></label>
                   <div>
-                    <input type="text" placeholder="Email address" name="messageRecipient" value="<%= typeof messageRecipient !== 'undefined' ? messageRecipient : '' %>">
+                    <input type="text" placeholder="Email address" name="messageRecipient"
+                      value="<%= typeof messageRecipient !== 'undefined' ? messageRecipient : '' %>">
                   </div>
                   <!-- <div class="err"><%= typeof messageRecipientError !== 'undefined' ? messageRecipientError : '' %></div> -->
                 </div>
                 <div class="prompt-container">
                   <label for="uname"><b>Subject:</b></label>
                   <div>
-                    <input type="text" placeholder="Subject" name="messageSubject" value="<%= typeof messageSubject !== 'undefined' ? messageSubject : '' %>">
+                    <input type="text" placeholder="Subject" name="messageSubject"
+                      value="<%= typeof messageSubject !== 'undefined' ? messageSubject : '' %>">
                   </div>
-                <div class="prompt-container">
-                  <label for="uname"><b>Body:</b></label>
-                  <div>
-                    <textarea id="message-body" name="messageBody" rows="4" cols="50"></textarea>
-                  </div>
-                  <div class="err"><%= typeof messageBodyError !== 'undefined' ? messageBodyError : '' %></div>
-                </div>
-                </div>
                   <div class="prompt-container">
-                    <button type="submit">Send</button>
+                    <label for="uname"><b>Body:</b></label>
+                    <div>
+                      <textarea id="message-body" name="messageBody" rows="4" cols="50"></textarea>
+                    </div>
+                    <div class="err">
+                      <%= typeof messageBodyError !=='undefined' ? messageBodyError : '' %>
+                    </div>
                   </div>
-              </form> 
+                </div>
+                <div class="prompt-container">
+                  <button type="submit">Send</button>
+                </div>
+              </form>
             </div>
           </div>
-        </div>
-    </body>
+    </div>
+</body>
+
 </html>

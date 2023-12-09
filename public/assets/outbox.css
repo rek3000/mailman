@@ -1,9 +1,6 @@
 @import "const.css";
-@import "partials/header.css";
-@import "partials/sidepanel.css";
 @import "partials/home.css";
-@import "partials/pagination.css";
-
+@import "./partials/pagination.css";
 
 #outbox-button {
   background: var(--hl-bg);

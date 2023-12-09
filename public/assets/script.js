@@ -21,13 +21,34 @@ function init() {
     this.style.boxShadow = "none";
   }
 
+  async function handleDeletion(event) {
+    event.preventDefault();
+    const messageIDs = Array.from(qsa("input[name='emailCheckbox']:checked"))
+      .map((checkbox) => checkbox.value);
+    let data = {messageIDs: messageIDs, 
+             placeholder: qs("#delete-button").value,
+            };
+    await fetch("/delete", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Delete from view of current session
+    for (let messageID of messageIDs) {
+      document.getElementById(`${messageID}`).remove();
+    }
+  }
+
   let emailsInfo = qsa(".email-info");
+  let deleteForm = qs("#delete-form");
+  deleteForm.addEventListener("submit", handleDeletion);
   for (let email of emailsInfo) {
     email.addEventListener("mouseover", emailHighlight);
     email.addEventListener("mouseout", changeBack);
-    // email.addEventListener("click", function() {
-    //   
-    // });
     email.style.cursor = "pointer";
   }
+
 }

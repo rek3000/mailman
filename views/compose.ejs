@@ -20,12 +20,19 @@
               <h1>New message</h1>
               <form action="/compose" method="post">
                 <div class="prompt-container">
-                  <label for="uname"><b>To:</b></label>
+                  <label for="messageRecipient"><b>To:</b></label>
                   <div>
-                    <input type="text" placeholder="Email address" name="messageRecipient"
-                      value="<%= typeof messageRecipient !== 'undefined' ? messageRecipient : '' %>">
+                    <!-- <input type="text" placeholder="Email address" name="messageRecipient" -->
+                    <!--   value="<%= typeof messageRecipient !== 'undefined' ? messageRecipient : '' %>"> -->
+                    <select name="messageRecipient" id="messageRecipient">
+                      <option value="select">Select an Email</option>
+                    <% for (let i = 0; i < messageRecipients.length; i++) { %>
+                      <option value="<%=messageRecipients[i]['userEmail']%>"><%=messageRecipients[i]['userEmail']%></option>
+                    <% } %>
+                    </select>
+                      
                   </div>
-                  <!-- <div class="err"><%= typeof messageRecipientError !== 'undefined' ? messageRecipientError : '' %></div> -->
+                  <div class="err"><%= typeof messageRecipientError !== 'undefined' ? messageRecipientError : '' %></div>
                 </div>
                 <div class="prompt-container">
                   <label for="uname"><b>Subject:</b></label>
@@ -39,7 +46,6 @@
                       <textarea id="message-body" name="messageBody" rows="4" cols="50"></textarea>
                     </div>
                     <div class="err">
-                      <%= typeof messageBodyError !=='undefined' ? messageBodyError : '' %>
                     </div>
                   </div>
                 </div>

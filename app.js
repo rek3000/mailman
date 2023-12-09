@@ -419,7 +419,17 @@ app.get("/compose", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/");
   }
-  return res.render("compose", {"userEmail": req.cookies.auth.userEmail});
+  const tb = "users";
+  let messageRecipients;
+  try {
+    const sql = `SELECT ?? FROM ??`; 
+    messageRecipients = (await conn.query(sql, ["userEmail", tb]))[0];
+  } catch (err) {
+    console.log(err);
+  }
+  console.log(messageRecipients)
+  return res.render("compose", {"userEmail": req.cookies.auth.userEmail,
+                                "messageRecipients": messageRecipients});
 });
 
 async function insert_email(messageInfo) {
@@ -473,18 +483,27 @@ app.post("/compose", async (req, res) => {
     messageAuthorEmail: req.cookies.auth.userEmail,
     messageRecipientError: ""
   };
-  console.log(JSON.stringify(messageInfo, null, 2));
 
-  if (messageInfo["messageRecipient"] === undefined || messageInfo["messageRecipient"] === "") {
-    messagerecipientError = "An recipient must be selected.";
+  const tb = "users";
+  let messageRecipients;
+  try {
+    const sql = `SELECT ?? FROM ??`; 
+    messageRecipients = (await conn.query(sql, ["userEmail", tb]))[0];
+  } catch (err) {
+    console.log(err);
+  }
+  if (messageInfo["messageRecipient"] === undefined || messageInfo["messageRecipient"] === "" || messageInfo["messageRecipient"] === "select") {
+    messageInfo["messageRecipientError"] = "An recipient must be selected.";
     success = false;
   }
 
   if (!success) {
-    return res.render("compose", {"userEmail": req.cookies.auth.userMail,
-      "recipientError": messageInfo["messageRecipientError"]
+    return res.render("compose", {"userEmail": req.cookies.auth.userEmail,
+      "messageRecipientError": messageInfo["messageRecipientError"],
+      "messageRecipients": messageRecipients
     });
   } else if (success) {
+    console.log(JSON.stringify(messageInfo, null, 2));
     insert_email(messageInfo);
     return res.send("Email sent successfully");
   }

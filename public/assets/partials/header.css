@@ -36,8 +36,7 @@
   flex-wrap: nowrap;
   width: 100%;
 }
-.control-panel-name{
-}
-.control-panel-button button{
-  width: 15%;
+
+#logout-botton {
+  font-weight: bold;
 }

@@ -320,6 +320,10 @@ app.get("/outbox/:page/:id", async (req, res) => {
   detail["messageAuthorFullName"] = messageAuthorFullName[0]["userFullName"];
   let messageBodyLines = detail["messageBody"].split("\n");
   detail["messageBody"] = messageBodyLines;
+  if (detail["messageSubject"] === "") {
+    detail["messageSubject"] = "<no subject>";
+  }
+  console.log(JSON.stringify(detail, null ,2));
   return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
                                "detail": detail,
                                "currentPage": req.params.page});
@@ -332,8 +336,8 @@ app.get("/compose", async (req, res) => {
   const tb = "users";
   let messageRecipients;
   try {
-    const sql = `SELECT ?? FROM ??`; 
-    messageRecipients = (await conn.query(sql, ["userEmail", tb]))[0];
+    const sql = `SELECT ?? FROM ?? WHERE ?? != ?`; 
+    messageRecipients = (await conn.query(sql, ["userEmail", tb, "userEmail", req.cookies.auth.userEmail]))[0];
   } catch (err) {
     console.log(err);
   }
@@ -402,4 +406,4 @@ process.on("SIGTERM", () => {
   appServer.close();
   console.log("Goodbye!");
   process.exit(0);
-});
+})

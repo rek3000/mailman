@@ -6,6 +6,12 @@
   background: var(--hl-bg);
 }
 
+.compose-container {
+  border: 2px solid lightcoral;
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
 .info-container {
   display: flex;
   flex-direction: row;
@@ -19,3 +25,22 @@
   width: 100%;
 }
 
+.prompt-container {
+  margin-bottom: 0.5rem;
+}
+
+.prompt-container select,
+.prompt-container textarea,
+.prompt-container input {
+  border: 2px solid coral;
+  border-radius: 5px;
+  padding: 0.3rem;
+}
+
+.prompt-container textarea {
+  width: 100%;
+}
+
+.prompt-container button {
+  margin-top: 0.4rem;
+}

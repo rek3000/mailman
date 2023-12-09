@@ -21,7 +21,7 @@
 .auth-container {
   padding: 20px;
   background: var(--hl-bg);
-  margin-left: 30%;
+  margin: 0 auto;
   width: 550px;
   /* text-align center; */
   font-weight: bold;
@@ -37,21 +37,32 @@
 }
 
 .prompt-container input {
-  /* text-align: left; */
   width: 500px;
   padding: 10px;
   border: 2px solid coral;
   border-radius: 5px;
-  /* border-width: 5px; */
 }
 
 .prompt-container button {
   width: 500px;
   padding: 10px;
   text-align: center;
-  /* border: 2px solid coral; */
   background: coral;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.login-or-regis p {
+  font-weight: normal;
+
+}
+
+.alternate-auth {
+  color: lightcoral;
+}
+
+#aether {
+  font-style: italic;
+  font-weight: bold;
 }
 

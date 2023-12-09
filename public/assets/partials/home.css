@@ -26,11 +26,12 @@ body {
   justify-content: space-evenly;
   border: 3px solid salmon;
   border-radius: 5px;
+  margin-bottom: 0.2rem;
+  background: var(--hl-bg);
 }
 
 
 .email-info {
-  background: var(--hl-bg);
   display: flex;
   flex-direction: row;
   justify-content: flex-start;

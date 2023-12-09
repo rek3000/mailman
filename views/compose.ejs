@@ -16,7 +16,7 @@
         <% const months=["Jan", "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec" ]
           %>
           <div class="email-container">
-            <div class="regis-container">
+            <div class="compose-container">
               <h1>New message</h1>
               <form action="/compose" method="post">
                 <div class="prompt-container">
@@ -38,13 +38,13 @@
                     <input type="text" placeholder="Subject" name="messageSubject"
                       value="<%= typeof messageSubject !== 'undefined' ? messageSubject : '' %>">
                   </div>
+                </div>
                   <div class="prompt-container">
                     <label for="uname"><b>Body:</b></label>
                     <div>
                       <textarea id="message-body" name="messageBody" rows="4" cols="50"></textarea>
                     </div>
                   </div>
-                </div>
                 <div class="prompt-container">
                   <button type="submit">Send</button>
                 </div>

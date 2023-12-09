@@ -43,14 +43,15 @@
                     <div>
                       <textarea id="message-body" name="messageBody" rows="4" cols="50"></textarea>
                     </div>
-                    <div class="err">
-                    </div>
                   </div>
                 </div>
                 <div class="prompt-container">
                   <button type="submit">Send</button>
                 </div>
               </form>
+              <div class="ok">
+              <%= typeof composeStatus !=='undefined' ? composeStatus : '' %>
+              </div>
             </div>
           </div>
     </div>

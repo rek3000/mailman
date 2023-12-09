@@ -16,6 +16,10 @@
         <% const months=["Jan", "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec" ]
           %>
           <div class="email-container">
+          <div class="author">
+          <p>From: <span id='emailName'><%=detail['messageAuthorEmail']%></span> ~ <span id="userFullName"><%=detail["messageAuthorFullName"]%></span></p>
+          <p>To: <span id='emailName'><%=detail['messageRecipient']%></span> ~ <span id="userFullName"><%=detail['messageRecipientFullName']%></span></p>
+          </div>
             <div class="email-detail">
               <div>
                 <p><%- detail["messageSubject"] %></p>
@@ -25,9 +29,6 @@
                   <p><%- detail["messageBody"][i]%></p>
                 </div>
                 <% } %>
-                  <div>
-                    <p><%- detail["messageAuthorFullName"] %></p>
-                  </div>
             </div>
           </div>
     </div>

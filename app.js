@@ -4,9 +4,9 @@ const crypto = require("crypto");
 const express = require("express");
 require("dotenv").config();
 const multer = require("multer");
-const fs = require("fs").promises;
 const mysql = require("mysql2/promise");
 const cookieParser = require("cookie-parser");
+const system = require("./src/controllers/system");
 const app = express();
 
 // Middlewares
@@ -38,18 +38,16 @@ let conn = null;
  * > Login to Email System using Cookie to remember session
  * */
 // Home Page
-app.get("/", async (req, res, next) => {
+app.get("/", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/login");
   }
-  console.log("User login: ");
-  console.log(JSON.stringify(req.cookies.auth, null, 2));
   return res.redirect("inbox");
 });
 
-app.post("/", async (req, res, next) => {
+app.post("/", async (req, res) => {
   if (!req.cookies.auth) {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
   console.log("User logout: ");
   console.log(JSON.stringify(req.cookies.auth, null, 2));
@@ -57,7 +55,7 @@ app.post("/", async (req, res, next) => {
 
   // destroy session data
   req.session = null;
-  res.redirect("/login");
+  return res.redirect("/login");
 });
 
 // Log-in page
@@ -65,7 +63,7 @@ app.get("/login", async (req, res) => {
   if (req.cookies.auth) {
     return res.redirect("/inbox");
   } else {
-    res.render("login");
+    return res.render("login");
   }
 });
 app.post("/login", async (req, res) => {
@@ -84,17 +82,14 @@ app.post("/login", async (req, res) => {
     respondData["emailError"] = "Email cannot be emptied";
     return res.render("login", respondData);
   } else {
-    const sql = "SELECT * FROM ?? WHERE ?? = ?";
-    try {
-      const rows = (await conn.query(sql, [tb, "userEmail", userEmail]))[0];
-      if (!(rows.length > 0)) {
+    const user = await system.get_user(userEmail);
+    if (!(user.length > 0)) {
         respondData["emailError"] = "Email Account is not existed";
         return res.render("login", respondData);
-      }
-      userInfo = rows[0];
-    } catch (err) {
-      console.log(err);
-      return res.status(500).send("User cannot login");
+    } else if (user === -1) {
+        return res.status(500).send("Server fault.");
+    } else {
+      userInfo = user[0];
     }
   }
 
@@ -128,14 +123,14 @@ app.post("/login", async (req, res) => {
 });
 
 // Sign-up page
-app.get("/register", async (req, res, next) => {
+app.get("/register", async (req, res) => {
   if (req.cookies.auth) {
     return res.redirect("/");
   }
   res.render("register");
 });
 
-app.post("/register", async (req, res, next) => {
+app.post("/register", async (req, res) => {
   if (req.cookies.auth) {
     return res.redirect("/");
   }
@@ -164,18 +159,21 @@ app.post("/register", async (req, res, next) => {
   if (userEmail === undefined || userEmail === "") {
     valid = false;
     userInfo["emailError"] = "Email cannot be emptied";
+    return res.render('register', userInfo);
   } else {
-    const sql = "SELECT * FROM ?? WHERE ?? = ?";
-    let [rows] = await conn.query(sql, [tb, "userEmail", userEmail]);
-    if (rows.length > 0) {
+    let user = await system.get_user(userEmail);
+    if (user["userEmail"] === userEmail) {
+      console.log('user')
       valid = false;
       userInfo["emailError"] = "Email account existed";
+      return res.render('register', userInfo);
     }
   }
 
   if (userPassword === undefined || userPassword === "") {
     valid = false;
     userInfo["passwordError"] = "Password cannot be emptied";
+    return res.render('register', userInfo);
   } else if (userPassword.length < 6) {
     valid = false;
     userInfo["passwordError"] = "Password is too short (must be equal or greater than 6 characters)";
@@ -185,109 +183,17 @@ app.post("/register", async (req, res, next) => {
   }
 
   if (valid) {
-    try {
-      const sql = "INSERT INTO ?? VALUES(?, ?, ?, ?)";
-      await conn.query(sql, [
-        tb,
-        userEmail,
-        hashedPassword,
-        userFullName,
-        userSalt,
-      ]);
-
-      console.log("User Registered:");
-      console.log(JSON.stringify(userInfo, null, 2));
-    } catch (err) {
-      if (err.errno === 1062) {
-        console.log("Duplicate entry");
-        res.status(400).send("Account exists: " + userEmail);
-        return;
-      }
-      console.log(err);
-      res.status(500).send("User cannot registration");
-      return;
+    const user = await system.insert_user(userInfo);
+    if (user === -1) {
+      res.status(500).send("User cannot register");
     }
-    res.render("redirect");
+    return res.render("redirect");
   } else {
-    res.render("register", userInfo);
+    return res.render("register", userInfo);
   }
 });
 
 // Inbox page
-async function get_full_name(userEmail) {
-  const tb = 'users';
-  const sql = `SELECT userFullName FROM ?? WHERE ?? = ?`;
-  let rows = [];
-  try {
-    [rows] = await conn.query(sql, 
-      [tb, "userEmail", userEmail]);
-
-  } catch (err) {
-    console.log(err);
-    return -1
-  }
-    return rows
-}
-async function get_email_list(userEmail, placeholderID, pagination) {
-  const sql = `SELECT messages.messageID, messages.messageSubject, 
-messages.messageDate, messages.messageAuthorEmail, users.userFullName as messageAuthorFullName, user_has_messages.isRead as isRead,
-user_has_messages.placeholderID 
-FROM ??
-INNER JOIN user_has_messages 
-ON user_has_messages.messageID  = messages.messageID 
-INNER JOIN users 
-ON messages.messageAuthorEmail = users.userEmail
-WHERE ?? = ? AND ?? = ?
-LIMIT ? OFFSET ?`;
-  const tb = "messages";
-  let messages = [];
-  try {
-    [messages] = await conn.query(sql, 
-      [tb, "user_has_messages.placeholderID", placeholderID, "user_has_messages.userEmail", userEmail, pagination["limit"], pagination["offset"]]);
-
-  } catch (err) {
-    console.log(err);
-    return -1
-  }
-    return messages
-}
-
-async function get_email_detail(messageID) {
-  const sql = `SELECT messageID, messageSubject, messageBody, 
-messageDate, messageAuthorEmail, userFullName as messageAuthorFullName 
-FROM ??
-INNER JOIN ??
-ON ?? = users.userEmail
-WHERE ?? = ?`;
-  const tb1 = "messages";
-  const tb2 = "users";
-  let rows = [];
-  try {
-    [rows] = await conn.query(sql, 
-      [tb1, tb2,  "messageAuthorEmail", "messageID", messageID]);
-
-  } catch (err) {
-    console.log(err);
-    return -1
-  }
-    return rows
-}
-
-async function get_total_messages(userEmail, placeholderID) {
-  const sql = `SELECT COUNT(*) FROM ??
-WHERE ?? = ? AND ?? = ?`;
-  const tb = "user_has_messages";
-  let count = []
-  try {
-    [count] = await conn.query(sql,
-    [tb, "userEmail", userEmail, "placeholderID", placeholderID]);
-  } catch (err) {
-    console.log(err);
-    return -1;
-  }
-  return count[0]['COUNT(*)'];
-}
-
 app.get("/inbox", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/login");
@@ -303,14 +209,12 @@ app.get("/inbox/:page", async (req,res) =>{
   const page = parseInt(req.params.page) || 1;
   const offset = (page - 1) * limit;
   const pagination = {limit: limit, offset: offset}
-  let messages = await get_email_list(req.cookies.auth.userEmail, 1, pagination);
-  let total_messages_number = await get_total_messages(req.cookies.auth.userEmail, 1)
+  let messages = await system.get_email_list(req.cookies.auth.userEmail, 1, pagination);
+  let total_messages_number = await system.get_total_messages(req.cookies.auth.userEmail, 1)
   let totalPages = Math.ceil(total_messages_number / limit);
   if (total_messages_number < 5) {
     totalPages = 1;
   }
-  // console.log(JSON.stringify(messages, null, 2));
-  // console.log("TOTALPAGES:" + totalPages);
   return res.render("inbox", {"userEmail" : req.cookies.auth.userEmail,
                               "messages": messages,
                               "currentPage": page,
@@ -356,34 +260,20 @@ app.post("/delete", async (req, res) => {
   res.json({ message: 'Email deleted successfully' });
 });
 
-async function change_read_status(userEmail, messageID) {
-  const tb = "user_has_messages";
-  const sql = `UPDATE ??
-  SET ?? = ?
-  WHERE ?? = ?
-  AND ?? = ?
-    `;
-  let updated = [];
-  try {
-    [updated] = await conn.query(sql,
-    [tb, "isRead", true, "messageID", messageID, "userEmail", userEmail]);
-  } catch (err) {
-    console.log(err);
-    return -1;
-  }
-
-}
-
 app.get("/inbox/:page/:id", async (req, res) => {
   if (!req.cookies.auth) {
     return res.redirect("/login");
   }
   const id = req.params.id;
-  let detail = (await get_email_detail(id))[0];
+  let detail = (await system.get_email_detail(id, 1))[0];
   const messageBodyLines = detail["messageBody"].split("\n")
   detail["messageBody"] = messageBodyLines;
+  const messageAuthorFullName = await system.get_full_name(detail["messageAuthorEmail"]);
+  const messageRecipientFullName = await system.get_full_name(req.cookies.auth.userEmail);
+  detail["messageRecipientFullName"] = messageRecipientFullName[0]["userFullName"];
+  detail["messageAuthorFullName"] = messageAuthorFullName[0]["userFullName"];
   console.log(JSON.stringify(detail, null, 2));
-  change_read_status(req.cookies.auth.userEmail, id)
+  await system.change_read_status(req.cookies.auth.userEmail, id)
   return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
                                "detail": detail,
                                "currentPage": req.params.page});
@@ -404,15 +294,13 @@ app.get("/outbox/:page", async (req, res) =>{
   const page = parseInt(req.params.page) || 1;
   const offset = (page - 1) * limit;
   const pagination = {limit: limit, offset: offset}
-  let messages = await get_email_list(req.cookies.auth["userEmail"], 2, pagination);
-  // console.log(JSON.stringify(messages, null, 2));
-  const userFullName = get_full_name(req.cookies.auth.userEmail)["userFullName"];
-  const total_messages_number = await get_total_messages(req.cookies.auth.userEmail, 2)
+  let messages = await system.get_email_list(req.cookies.auth["userEmail"], 2, pagination);
+  const userFullName = await system.get_full_name(req.cookies.auth.userEmail)["userFullName"];
+  const total_messages_number = await system.get_total_messages(req.cookies.auth.userEmail, 2)
   let totalPages = Math.ceil(total_messages_number / limit);
   if (total_messages_number < 5) {
     totalPages = 1;
   }
-  // console.log(totalPages);
   return res.render("outbox", {"userEmail" : req.cookies.auth.userEmail,
                               "userFullName": userFullName,
                               "messages": messages,
@@ -425,10 +313,13 @@ app.get("/outbox/:page/:id", async (req, res) => {
     return res.redirect("/login");
   }
   const id = req.params.id;
-  let detail = (await get_email_detail(id))[0];
-  let messageBodyLines = detail["messageBody"].split("\n")
-  detail["messageBody"] = messageBodyLines
-  console.log(JSON.stringify(detail, null, 2));
+  let detail = (await system.get_email_detail(id, 1))[0];
+  const messageRecipientFullName = await system.get_full_name(detail["messageRecipient"]);
+  const messageAuthorFullName = await system.get_full_name(req.cookies.auth.userEmail);
+  detail["messageRecipientFullName"] = messageRecipientFullName[0]["userFullName"];
+  detail["messageAuthorFullName"] = messageAuthorFullName[0]["userFullName"];
+  let messageBodyLines = detail["messageBody"].split("\n");
+  detail["messageBody"] = messageBodyLines;
   return res.render("detail", {"userEmail": req.cookies.auth.userEmail,
                                "detail": detail,
                                "currentPage": req.params.page});
@@ -451,42 +342,6 @@ app.get("/compose", async (req, res) => {
                                 "messageRecipients": messageRecipients});
 });
 
-async function insert_email(messageInfo) {
-  const sql1 = `INSERT INTO ?? 
-  VALUES(?, ?, ?, ?, ?)`;
-  const sql2 = `INSERT INTO ?? 
-  VALUES(?, ?, ?, ?)`;
-  const tb1 = "messages";
-  const tb2 = "user_has_messages";
-
-  try {
-    const [message] = await conn.query(sql1, 
-      [tb1, messageInfo["messageID"],
-            messageInfo["messageSubject"],
-            messageInfo["messageBody"],
-            messageInfo["messageDate"],
-            messageInfo["messageAuthorEmail"]]);
-
-    // Sender insert
-    const [sender] = await conn.query(sql2, 
-      [tb2, messageInfo["messageID"],
-            messageInfo["messageAuthorEmail"],
-            "2",
-            true]);
-    // Receiver insert
-    const [receiver] = await conn.query(sql2, 
-      [tb2, messageInfo["messageID"],
-            messageInfo["messageRecipient"],
-            "1",
-            false]);
-    console.log("New message created")
-    console.log(JSON.stringify(message[0], null, 2));
-  } catch (err) {
-    console.log(err);
-    return -1;
-  }
-    return;
-}
 
 app.post("/compose", async (req, res) => {
   if (!req.cookies.auth) {
@@ -523,8 +378,10 @@ app.post("/compose", async (req, res) => {
     });
   } else if (success) {
     console.log(JSON.stringify(messageInfo, null, 2));
-    insert_email(messageInfo);
-    return res.send("Email sent successfully");
+    await system.insert_email(messageInfo);
+    return res.render("compose", {"userEmail": req.cookies.auth.userEmail,
+      "composeStatus": "Email sent successfully",
+      "messageRecipients": messageRecipients});
   }
 });
 

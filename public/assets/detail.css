@@ -17,6 +17,21 @@
 
 .email-detail {
   border: 3px solid salmon;
+  border-radius: 3px;
   padding: 0.5rem;
+}
 
+.author {
+  border: 3px solid lightcoral;
+  border-radius: 3px;
+  padding: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+#emailName {
+  font-weight: bold;
+}
+
+#userFullName {
+  font-style: oblique;
 }

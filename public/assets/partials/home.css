@@ -24,14 +24,10 @@ body {
 .email-object {
   display: flex;
   justify-content: space-evenly;
+  border: 3px solid salmon;
+  border-radius: 5px;
 }
 
-
-
-#email-checkbox {
-  margin: 0.5rem;
-  width: 20px;
-}
 
 .email-info {
   background: var(--hl-bg);
@@ -39,11 +35,9 @@ body {
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  border: 3px solid salmon;
   flex-wrap: nowrap;
   padding: 0.5rem;
   margin-bottom: 0.2rem;
-  border-radius: 5px;
   flex: 1 80%;
 }
 
@@ -52,16 +46,25 @@ body {
 }
 
 .email-left {
-  /* display: flex; */
   flex-direction: column;
-  /* display:inline-block; */
   flex-wrap: nowrap;
   flex: 1 80%;
-  /* width: 80%; */
 }
 .email-right {
   display: flex;
   justify-content: flex-end;
   width: 20%;
   flex-wrap: nowrap;
+}
+
+#delete-button {
+  margin-bottom: 0.4rem;
+  border: 3px solid red;
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
+.email-checkbox {
+  margin: 0.4rem;
+  width: 1.5rem;
 }

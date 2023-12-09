@@ -20,7 +20,7 @@
         </div>
         <form action="/register" method="post">
             <div class="prompt-container">
-                <label for="uname"><b>Email</b></label>
+                <label for="email"><b>Email</b></label>
                 <div>
                     <input type="text" placeholder="Enter Desired Email" name="email"
                         value="<%= typeof userEmail !== 'undefined' ? userEmail : '' %>">
@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="prompt-container">
-                <label for="uname"><b>Full Name</b></label>
+                <label for="fullname"><b>Full Name</b></label>
                 <div>
                     <input type="text" placeholder="Enter Your Full Name" name="fullname"
                         value="<%= typeof userFullName !== 'undefined' ? userFullName : '' %>">
